@@ -23,10 +23,23 @@ V_rated_ref = 11.4
 Aero_design.Radius_Scaling(R_ref, V_rated_ref, 'A', 'B')
 Aero_design.Airfoil_Tuning([0.38, 0.32, 0.47, 0.2], remove = ['cylinder.txt', 'FFA-W3-600.txt'], polars=False)
 Aero_design.Fit_Polynomials([3, 3, 2, 6], R_ref, plotting=False)
-Aero_design.Chord_Optimisation(B=3, TSR=6.75)
+Aero_design.Chord_Optimisation(B=3, TSR=6.75, plotting=False)
 Aero_design.Limits_and_Smoothing(R_ref)
-
-
 Aero_design.Make_ae_file('New_design')
+Aero_design.Make_htc(R_ref)
+
+#%%
+
+from os import listdir
+from os.path import isfile, join
+import numpy as np
+import matplotlib.pyplot as plt
+from  scipy.optimize  import  least_squares
+from scipy.interpolate import CubicSpline
+import shutil
+import os
+import re
+
+
 
 

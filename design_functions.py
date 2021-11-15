@@ -13,6 +13,7 @@ from  scipy.optimize  import  least_squares
 from scipy.interpolate import CubicSpline
 import shutil
 import os
+import re
 
 class Aero_design:
     def __init__(self):
@@ -254,7 +255,7 @@ class Aero_design:
 
         return np.array(res)
 
-    def Chord_Optimisation(self, B=3, TSR=8.0, N=200):
+    def Chord_Optimisation(self, B=3, TSR=8.0, N=200, plotting=True):
         print('>> Optimising chord...')
 
         self.TSR = TSR
@@ -278,19 +279,21 @@ class Aero_design:
 
         var_lst = [self.c, self.alpha, self.cl, self.cl/self.cd, self.a, self.ap, self.beta, self.cp, self.ct]
         labels = ['$c$ [m]', r'$\alpha$ [deg]', '$C_l$ [-]', '$C_l/C_d$ [-]', '$a$ [-]', "$a'$ [-]", r'$\beta$ [deg]', '$C_p$ [-]', '$C_t$ [-]']
-        for j, var in enumerate(var_lst):
-            plt.figure()
-            plt.plot(self.r_lst, var, '-b')
-            plt.xlabel('r [m]')
-            plt.ylabel(labels[j])
-            plt.grid()
 
-            if j == 4:
-                plt.axhline(y=1/3, color='k', linestyle='--', alpha=0.5)
-            elif j == 7:
-                plt.axhline(y=16/27, color='k', linestyle='--', alpha=0.5)
-            elif j ==8:
-                plt.axhline(y=8/9, color='k', linestyle='--', alpha=0.5)
+        if plotting:
+            for j, var in enumerate(var_lst):
+                plt.figure()
+                plt.plot(self.r_lst, var, '-b')
+                plt.xlabel('r [m]')
+                plt.ylabel(labels[j])
+                plt.grid()
+
+                if j == 4:
+                    plt.axhline(y=1/3, color='k', linestyle='--', alpha=0.5)
+                elif j == 7:
+                    plt.axhline(y=16/27, color='k', linestyle='--', alpha=0.5)
+                elif j ==8:
+                    plt.axhline(y=8/9, color='k', linestyle='--', alpha=0.5)
         print('>> CP: '+ str(round(self.CP[0],3)) + ', CT:' + str(round(self.CT[0],3)))
 
     def Limits_and_Smoothing(self, R_ref, plotting=True):
@@ -353,17 +356,17 @@ class Aero_design:
                 plt.legend()
 
 
-    def Make_ae_file(self, new_turbine_name):
+    def Make_ae_file(self, name):
         print('>> Making ae file...')
-        new_turbine_name = 'New_design'
+        self.new_turbine_name = name
 
         foldernames = [name for name in os.listdir(".") if os.path.isdir(name)]
-        if new_turbine_name not in foldernames:
-            newpath = './'+new_turbine_name
+        if self.new_turbine_name not in foldernames:
+            newpath = './'+self.new_turbine_name
             shutil.copytree('./DTU10MW', newpath)
         else:
-            print('  Name already exists. Create new folder or files will be overwritten.')
-            newpath = './'+new_turbine_name
+            print('  Name already exists. Overwriting files...')
+            newpath = './'+self.new_turbine_name
 
         newpath_data = newpath+'/data'
         filenames = [f for f in listdir(newpath_data) if isfile(join(newpath_data, f))]
@@ -371,9 +374,9 @@ class Aero_design:
         for i in range(len(filenames)):
             prefix = filenames[i][0:12]
             if prefix == 'DTU_10MW_RWT':
-                os.rename(newpath_data+ '/' + filenames[i], newpath_data+ '/' +new_turbine_name+filenames[i][12:])
+                os.rename(newpath_data+ '/' + filenames[i], newpath_data+ '/' +self.new_turbine_name+filenames[i][12:])
 
-        ae_path = newpath_data +'/'+ new_turbine_name +'_ae.dat'
+        ae_path = newpath_data +'/'+ self.new_turbine_name +'_ae.dat'
         with open(ae_path, 'r') as file:
             contents = file.readlines()
 
@@ -401,3 +404,32 @@ class Aero_design:
 
         with open(ae_path, 'w') as file:
             file.writelines(contents)
+
+    def Make_htc(self, R_ref):
+
+        print('>> Making htc file...')
+
+        new_path = './'+ self.new_turbine_name
+
+        filenames = [f for f in listdir(new_path) if isfile(join(new_path, f))]
+        for i in range(len(filenames)):
+            prefix = filenames[i][0:12]
+            if prefix == 'DTU_10MW_RWT':
+                os.rename(new_path+ '/' + filenames[i], new_path+ '/' + self.new_turbine_name+filenames[i][12:])
+
+        filenames = [f for f in listdir(new_path) if isfile(join(new_path, f))]
+
+        ratio = (self.R - 2.8)/(R_ref - 2.8)
+        with open(new_path+'/'+filenames[1], 'r') as file:
+            contents = file.readlines()
+            c2_block = contents[107:134]
+            for i in range(len(c2_block)):
+                lst = re.split(r'\t+', c2_block[i])
+                lst[3] = str(float(lst[3])*ratio)
+                lst[4] = str(float(lst[4])*ratio)
+                lst[5] = str(float(lst[5])*ratio)
+                twist = -np.interp(float(lst[5]), self.r_lst, self.beta)
+                lst[6] = str(twist)
+                contents[107+i] = '\t'.join(map(str,lst))
+
+

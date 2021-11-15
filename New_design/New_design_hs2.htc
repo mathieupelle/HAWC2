@@ -268,18 +268,6 @@ end constraint;
 ;
 end new_htc_structure;
 ;---------------------------------------------------------------------------------------------------------------------------------------------------------------- 
-begin wind ;
-  density                 1.225 ;
-  wsp                     8   ;
-  tint                    0.0   ;
-  horizontal_input        1     ;            0=false, 1=true
-  windfield_rotations     0 0.0 0.0 ;    yaw, tilt, rotation
-  center_pos0             0.0 0.0 -119 ; hub heigth
-  shear_format            1  0.14  ;0=none,1=constant,2=log,3=power,4=linear
-  turb_format             0     ;  0=none, 1=mann,2=flex
-  tower_shadow_method     0     ;  0=none, 1=potential flow, 2=jet
-end wind;
-;
 begin aero ;
   nblades  3;
   hub_vec shaft -3 ;         rotor rotation vector (normally shaft composant directed from pressure to sustion side)
@@ -310,8 +298,6 @@ begin hawcstab2 ;
     main_body blade1 ;
     second_order_actuator pitch1  1 0.7 ;
   end rotating_threebladed_substructure ;
-  operational_data_filename ./data/operation.dat ;
-  verbose ;
   begin operational_data; 
     windspeed 4.0 25.0 22 ; cut-in [m/s], cut-out [m/s], points [-]
     genspeed 6 9.6 ; [rpm]
@@ -321,35 +307,22 @@ begin hawcstab2 ;
 	maxpow 10641.618 ; [kW]
     prvs_turbine 1 ; [-]
     include_torsiondeform 1 ; [-];
-	operational_data_file_wind 1;
+	set_torque_limit 0;
   end operational_data ;
-  ; Basic full load PI pitch controller
-  ;                          1           2             3           4          5         6          7        8    9       10;
-  ;                     P_rated Omega_rated      Kp_full      Ki_full  K1_theta  K2_theta omega_filt csi_filt type K0_omega;
-;  pi_pitch_controller 10641.618      1.005 0.118697E+01 0.364908E+00 102.68665 754.18745        0.4      0.7    0;
-  ; simplified linearization of the Basic DTU Wind Energy controller (https://github.com/DTUWindEnergy/BasicDTUController)
-  ;                                   1            2              3             4             5         6         7          8        9      10   11;
-  ;                          Kp_partial   Ki_partial   Kopt_partial       Kp_full       Ki_full  K1_theta   K2_theta omega_filt csi_filt DT_freq type;
-  ; be careful, the following parameters needs to be adapted based on your own controller tuning.
-  ;basic_dtu_we_controller 0.708402E+08 0.158965E+08 0.117967E+08 0.118697E+01 0.364908E+00 10.12612 435.19980        0.4      0.7    1.92    1;
-  basic_dtu_we_controller 0.708251E+08 0.158931E+08 0.849245E+07 0.120206E+01 0.234833E+00 11.22739 464.10617        0.4      0.7    1.92    1;
   begin controller_tuning ;
     partial_load 0.05 0.7; fn [hz], zeta [-]
     full_load 0.05 0.7 ; fn [hz], zeta [-]
     gain_scheduling 2 ; 1 linear, 2 quadratic
     constant_power 1; 0 constant torque, 1 constant power at full load	
   end controller_tuning ;
-  begin controller ;
-    begin input ;
-	  constraint bearing1 shaft_rot ;
-	  constraint bearing2 pitch1 collective ;
-    end input ;
-    begin output ;
-		; - Rotor speed and pitch angle
-     constraint bearing1 shaft_rot 1 only 2 ; 			[1]
-	 constraint bearing2 pitch1 1 only 1 collective ; 	[2]
-    end output ;
-  end controller ;
-  phi_per_node 3;
+  ; Operational data
+  operational_data_filename	./data/DTU_10MW.opt ;file with operational data points
+  ; HAWC2S commands (uncomment as needed);
+  compute_optimal_pitch_angle use_operational_data;
+  compute_steady_states	bladedeform tipcorrect induction nogradients;	compute steady states using hawcstab2 (need for other commands)
+  ;compute_controller_input;
+  save_power;	save steady-state values to .pwr
+  ;save_induction;	save spanwise values to many .ind files, 3 for each wind speed
+  
 end hawcstab2 ;
 exit;
