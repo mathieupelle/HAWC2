@@ -11,11 +11,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from  scipy.optimize  import  least_squares
 from scipy.interpolate import CubicSpline
-
-
-
-
-
+import shutil
+import os
 
 class Aero_design:
     def __init__(self):
@@ -59,11 +56,11 @@ class Aero_design:
             for i in range(len(remove)):
                 filenames.remove(remove[i])
 
-        self.cl_des, self.cd_des, self.alpha_des, self.tcratio = np.zeros((4,1,len(filenames)))
+        self.cl_des, self.cd_des, self.alpha_des, self.tcratio_af = np.zeros((4,1,len(filenames)))
 
         for i in range(len(filenames)):
 
-            self.tcratio[0 ,i] = float(filenames[i][7:10])/10
+            self.tcratio_af[0 ,i] = float(filenames[i][7:10])/10
 
             data = np.loadtxt(aero_data_path + filenames[i])
             data = data[np.argmin(abs(data[:, 0]+15)):np.argmin(abs(data[:, 0]-30)), :]
@@ -101,7 +98,7 @@ class Aero_design:
         self.cl_des = np.append(self.cl_des, np.array([[0]]))
         self.alpha_des = np.append(self.alpha_des, np.array([[0]]))
         self.cd_des = np.append(self.cd_des, np.array([[0.6]]))
-        self.tcratio = np.append(self.tcratio, np.array([[100]]))
+        self.tcratio_af = np.append(self.tcratio_af, np.array([[100]]))
         self.clcd_des = self.cl_des/self.cd_des
 
 
@@ -114,8 +111,8 @@ class Aero_design:
         self.coefs = dict.fromkeys(names, None)
         lab = ['Design $C_l$ [-]', 'Design $C_l/C_d$ [-]', r'Design $\alpha$ [deg]']
         for i in range(3):
-            z1 = np.polyfit(self.tcratio[0:4], y[i][0:4], order[i])
-            z2 = np.polyfit(self.tcratio[3:], y[i][3:], 1)
+            z1 = np.polyfit(self.tcratio_af[0:4], y[i][0:4], order[i])
+            z2 = np.polyfit(self.tcratio_af[3:], y[i][3:], 1)
             self.coefs[names[i]] = [z1, z2]
             p1 = np.poly1d(z1)
             p2 = np.poly1d(z2)
@@ -123,9 +120,9 @@ class Aero_design:
 
             if plotting:
                 plt.figure()
-                plt.plot(x[x<=self.tcratio[3]], p1(x[x<=self.tcratio[3]]), 'b')
-                plt.plot(x[x>=self.tcratio[3]], p2(x[x>=self.tcratio[3]]), 'b')
-                plt.plot(self.tcratio, y[i], '+k')
+                plt.plot(x[x<=self.tcratio_af[3]], p1(x[x<=self.tcratio_af[3]]), 'b')
+                plt.plot(x[x>=self.tcratio_af[3]], p2(x[x>=self.tcratio_af[3]]), 'b')
+                plt.plot(self.tcratio_af, y[i], '+k')
                 plt.grid()
                 plt.xlabel('$t/c$ [\%]')
                 plt.ylabel(lab[i])
@@ -133,10 +130,11 @@ class Aero_design:
         ae_path = './DTU10MW/data/DTU_10MW_RWT_ae.dat'
         data = np.genfromtxt(ae_path, skip_header=2, delimiter='\t')
 
-        self.t_max = max(data[:,2])
-        tcratio_ref = data[:,2]*data[:,1]/100
-        t = tcratio_ref*self.R/R_ref
-        r = np.linspace(0, self.R , len(tcratio_ref))
+
+        t_ref = data[:,2]*data[:,1]/100
+        self.t_max = max(t_ref)
+        t = t_ref*self.R/R_ref
+        r = np.linspace(0, self.R , len(t_ref))
 
         z = np.polyfit(r, t, order[-1])
         self.coefs[names[-1]] = z
@@ -145,7 +143,7 @@ class Aero_design:
 
         if plotting:
             plt.figure()
-            plt.plot(data[:,0]/R_ref, tcratio_ref, 'x', label='DTU 10MW')
+            plt.plot(data[:,0]/R_ref, t_ref, 'x', label='DTU 10MW')
             plt.plot(r/self.R, t, 'x', label='New design')
             plt.plot(np.linspace(0, 1, 100), y, '--k',  label='Fit')
             plt.xlabel('r/R [-]')
@@ -243,6 +241,7 @@ class Aero_design:
         idx = np.where(self.r_lst == self.r)
         self.t[idx] = t
         self.c[idx] = c
+        self.tcratio[idx] = tcratio
         self.phi[idx] = phi
         self.alpha[idx] = self.Alpha_poly(tcratio)
         self.beta[idx] = np.rad2deg(phi)-self.Alpha_poly(tcratio)
@@ -262,7 +261,7 @@ class Aero_design:
         self.B = B
 
         self.r_lst = np.linspace(5, self.R*0.95, N)
-        self.t, self.c, self.phi, self.alpha, self.beta, self.cl, self.cd, self.ap, self.a, self.cp, self.ct, self.CP, self.CT = np.zeros((13, N, 1))
+        self.t, self.c, self.tcratio, self.phi, self.alpha, self.beta, self.cl, self.cd, self.ap, self.a, self.cp, self.ct, self.CP, self.CT = np.zeros((14, N, 1))
 
         x0 = np.array([6.0, 0.001])
         bounds = ((0, 0), (np.inf, 1))
@@ -311,7 +310,7 @@ class Aero_design:
             if self.beta[i] > 25:
                 self.beta[i] = 25
 
-            tcratio = self.t[i]/self.c[i]*100
+            tcratio = self.tcratio[i]
             if tcratio < 24.1:
                 tcratio = 24.1
                 self.c[i] = self.t[i]/(tcratio/100)
@@ -324,8 +323,8 @@ class Aero_design:
             elif self.r_lst[i] < 10:
                 self.c[i] = np.interp(self.r_lst[i], [self.r_lst[0], 10], [c_ref[0], cs(10)*self.R/R_ref])
 
-            if self.c[i] > self.r_lst[-1]/r_ref[-1]*max(c_ref):
-                self.c[i] = self.r_lst[-1]/r_ref[-1]*max(c_ref)
+            if self.c[i] > self.R/R_ref*max(c_ref):
+                self.c[i] = self.R/R_ref*max(c_ref)
 
 
 
@@ -334,10 +333,12 @@ class Aero_design:
         self.t = np.append(self.t, np.array([self.t[-1]*0.55]))
         self.c = np.append(self.c, np.array([self.c[-1]*0.55]))
 
+        self.tcratio = self.t/self.c*100
+
 
         if plotting:
             labels = [r'$\beta$ [deg]', '$c$ [m]', '$t/c$ [%]', '$t$ [m]']
-            data2 = [self.r_lst, self.beta, self.c, self.t/self.c*100, self.t]
+            data2 = [self.r_lst, self.beta, self.c, self.tcratio, self.t]
             for i in range(len(labels)):
                 plt.figure()
                 plt.grid()
@@ -352,4 +353,51 @@ class Aero_design:
                 plt.legend()
 
 
+    def Make_ae_file(self, new_turbine_name):
+        print('>> Making ae file...')
+        new_turbine_name = 'New_design'
 
+        foldernames = [name for name in os.listdir(".") if os.path.isdir(name)]
+        if new_turbine_name not in foldernames:
+            newpath = './'+new_turbine_name
+            shutil.copytree('./DTU10MW', newpath)
+        else:
+            print('  Name already exists. Create new folder or files will be overwritten.')
+            newpath = './'+new_turbine_name
+
+        newpath_data = newpath+'/data'
+        filenames = [f for f in listdir(newpath_data) if isfile(join(newpath_data, f))]
+
+        for i in range(len(filenames)):
+            prefix = filenames[i][0:12]
+            if prefix == 'DTU_10MW_RWT':
+                os.rename(newpath_data+ '/' + filenames[i], newpath_data+ '/' +new_turbine_name+filenames[i][12:])
+
+        ae_path = newpath_data +'/'+ new_turbine_name +'_ae.dat'
+        with open(ae_path, 'r') as file:
+            contents = file.readlines()
+
+        N = len(self.r_lst) + 3
+        ae_arr = np.ones((N, 4))
+        ae_arr[0,:] = np.array([1, None, None, None])
+        ae_arr[1,:] = np.array([1, N-2, None, None])
+        ae_arr[2,:] = np.array([0, self.c[0], self.tcratio[0], 1])
+        ae_arr[3:,0] = np.array(self.r_lst)
+        ae_arr[3:,1] = np.array(self.c)
+        ae_arr[3:,2] = np.array(self.tcratio)
+
+
+        np.savetxt(ae_path, ae_arr, delimiter='\t', fmt=' %s')
+
+        with open(ae_path, 'r') as file:
+            contents = file.readlines()
+
+            for i in range(len(contents)):
+                if i<2:
+                    contents[i] = contents[i].replace('nan', '')
+                    contents[i] = contents[i][1:]
+                else:
+                    contents[i] = contents[i][1:-1]+'\t ;'+contents[i][-1]
+
+        with open(ae_path, 'w') as file:
+            file.writelines(contents)

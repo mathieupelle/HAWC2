@@ -5,13 +5,15 @@ Created on Sun Nov 14 11:09:04 2021
 @author: Mathieu Pellé
 """
 
+#%% P A C K A G E S
+
 from design_functions import Aero_design
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.interpolate import CubicSpline
 
 
-
+#%% A E R O  D E S I G N
 
 Aero_design = Aero_design()
 
@@ -23,4 +25,8 @@ Aero_design.Airfoil_Tuning([0.38, 0.32, 0.47, 0.2], remove = ['cylinder.txt', 'F
 Aero_design.Fit_Polynomials([3, 3, 2, 6], R_ref, plotting=False)
 Aero_design.Chord_Optimisation(B=3, TSR=6.75)
 Aero_design.Limits_and_Smoothing(R_ref)
+
+
+Aero_design.Make_ae_file('New_design')
+
 
