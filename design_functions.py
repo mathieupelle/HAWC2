@@ -15,7 +15,7 @@ import shutil
 import os
 import re
 
-class Aero_design:
+class HAWC_design_functions:
     def __init__(self):
         print('>> Aero design class initialised...')
 
@@ -405,9 +405,17 @@ class Aero_design:
         with open(ae_path, 'w') as file:
             file.writelines(contents)
 
-    def Make_htc(self, R_ref):
+    def Make_htc(self, omega_rated, losses, R_ref, tsr=0, omega_min=0):
 
         print('>> Making htc file...')
+
+        if tsr == 0:
+            tsr = self.TSR
+
+        self.omega_min = omega_min
+        self.omega_rated = omega_rated
+        self.losses = losses
+        self.max_power = 10000*(1+self.losses)
 
         new_path = './'+ self.new_turbine_name
 
@@ -418,9 +426,11 @@ class Aero_design:
                 os.rename(new_path+ '/' + filenames[i], new_path+ '/' + self.new_turbine_name+filenames[i][12:])
 
         filenames = [f for f in listdir(new_path) if isfile(join(new_path, f))]
+        self.htc_steady_path = new_path+'/'+filenames[1]
+        self.htc_unsteady_path = new_path+'/'+filenames[0]
 
         ratio = (self.R - 2.8)/(R_ref - 2.8)
-        with open(new_path+'/'+filenames[1], 'r') as file:
+        with open(self.htc_steady_path, 'r') as file:
             contents = file.readlines()
             c2_block = contents[107:134]
             for i in range(len(c2_block)):
@@ -431,5 +441,79 @@ class Aero_design:
                 twist = -np.interp(float(lst[5]), self.r_lst, self.beta)
                 lst[6] = str(twist)
                 contents[107+i] = '\t'.join(map(str,lst))
+
+            for i, line in enumerate(contents):
+
+                if line.lstrip().startswith('genspeed'):
+                    contents[i] = ('    genspeed '+str(self.omega_min)+' '+str(self.omega_rated)+' ; [rpm]\n')
+                if line.lstrip().startswith('opt_lambda'):
+                    contents[i] = ('    opt_lambda '+str(tsr)+' ; [-]\n')
+                if line.lstrip().startswith('maxpow'):
+                    contents[i] = ('    maxpow '+str(self.max_power)+' ; [kW]\n')
+
+        with open(self.htc_steady_path, 'w') as file:
+            file.writelines(contents)
+
+
+    def Define_htc_mode(self, mode, blade_dist=False, control_lst = 0):
+
+
+        print('>> Modifying htc file...')
+
+        freq1 = control_lst[0]
+        damp1 = control_lst[1]
+        freq2 = control_lst[2]
+        damp2 = control_lst[3]
+        gain_scheduling = control_lst[4]
+        control_type = control_lst[5]
+
+        opt_path = './data/'+str(self.new_turbine_name)+'.opt'
+        with open(self.htc_steady_path, 'r') as file:
+            contents = file.readlines()
+            for i, line in enumerate(contents):
+
+                if mode == 'generate_opt' :
+                    if line.lstrip().startswith('operational_data_filename'):
+                        contents[i] = ('  ;'+'operational_data_filename\t'+str(opt_path)+' ;file with operational data points\n')
+                    if line.lstrip().startswith('compute_controller_input'):
+                        contents[i] = ('  ;compute_controller_input;\n')
+                    if line.lstrip().startswith(';compute_optimal_pitch_angle use_operational_data'):
+                        contents[i] = ('  compute_optimal_pitch_angle use_operational_data;\n')
+
+                elif mode == 'controller_tuning':
+                    if line.lstrip().startswith(';compute_controller_input'):
+                        contents[i] = ('  compute_controller_input;\n')
+                    if line.lstrip().startswith(';operational_data_filename'):
+                        contents[i] = ('  operational_data_filename\t'+str(opt_path)+' ;file with operational data points\n')
+                    if line.lstrip().startswith('compute_optimal_pitch_angle use_operational_data'):
+                        contents[i] = ('  ;compute_optimal_pitch_angle use_operational_data;\n')
+
+                    if isinstance(control_lst, list):
+
+                        if line.lstrip().startswith('partial_load'):
+                            contents[i] = ('    partial_load '+str(freq1)+' '+str(damp1)+' ; fn [hz], zeta [-]\n')
+
+                        if line.lstrip().startswith('full_load'):
+                            contents[i] = ('    full_load '+str(freq2)+' '+str(damp2)+' ; fn [hz], zeta [-]\n')
+
+                        if line.lstrip().startswith('gain_scheduling'):
+                            contents[i] = ('    gain_scheduling '+str(gain_scheduling)+' ; 1 linear, 2 quadratic\n')
+
+                        if line.lstrip().startswith('onstant_power'):
+                            contents[i] = ('    constant_power '+str(control_type)+'; 0 constant torque, 1 constant power at full load\t\n')
+
+                    else:
+                        print('  No controller settings given. Using default...')
+                else:
+                    print('  Invalid htc mode')
+
+
+                if blade_dist:
+                    if line.lstrip().startswith(';save_induction'):
+                        contents[i] = ('  save_induction;\n')
+
+
+        with open(self.htc_steady_path, 'w') as file:
+            file.writelines(contents)
 
 
