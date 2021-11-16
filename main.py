@@ -43,3 +43,12 @@ import re
 
 
 
+
+
+#TODO edit end of htc to desired run style
+#TODO look at structural part
+#TODO look at modal analysis part
+#TODO look at control part
+#TODO look at loads part
+
+
