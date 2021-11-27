@@ -1,4 +1,6 @@
 begin new_htc_structure;
+;body_output_file_name ./info/body.dat;
+;beam_output_file_name ./info/beam.dat;
 ;-------------------------------------------------------------------------------------------------------------------------------
   begin main_body;         tower 115m
     name        tower ;            
@@ -316,13 +318,13 @@ begin hawcstab2 ;
     constant_power 1; 0 constant torque, 1 constant power at full load	
   end controller_tuning ;
   ; Operational data
-  operational_data_filename	./data/DTU_10MW.opt ;file with operational data points
+  operational_data_filename	./DTU_10MW.opt ;file with operational data points
   ; HAWC2S commands (uncomment as needed);
-  compute_optimal_pitch_angle use_operational_data;
+  ;compute_optimal_pitch_angle use_operational_data;
   compute_steady_states	bladedeform tipcorrect induction nogradients;	compute steady states using hawcstab2 (need for other commands)
   ;compute_controller_input;
   save_power;	save steady-state values to .pwr
-  ;save_induction;	save spanwise values to many .ind files, 3 for each wind speed
+  save_induction;	save spanwise values to many .ind files, 3 for each wind speed
   
 end hawcstab2 ;
 exit;

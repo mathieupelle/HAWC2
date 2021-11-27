@@ -44,6 +44,8 @@ class HAWC_design_functions:
             R2_guess = self.R
             it = it + 1
 
+        print('   New rotor radius: '+str(round(self.R,3))+' m')
+
 
     def Airfoil_Tuning(self, cl_shift, remove = False, polars = True):
         print('>> Selecting airfoil design points...')
@@ -359,16 +361,17 @@ class HAWC_design_functions:
     def Make_ae_file(self, name):
         print('>> Making ae file...')
         self.new_turbine_name = name
+        self.oldpath = './DTU10MW'
 
         foldernames = [name for name in os.listdir(".") if os.path.isdir(name)]
         if self.new_turbine_name not in foldernames:
-            newpath = './'+self.new_turbine_name
-            shutil.copytree('./DTU10MW', newpath)
+            self.newpath = './'+self.new_turbine_name
+            shutil.copytree(self.oldpath, self.newpath)
         else:
             print('  Name already exists. Overwriting files...')
-            newpath = './'+self.new_turbine_name
+            self.newpath = './'+self.new_turbine_name
 
-        newpath_data = newpath+'/data'
+        newpath_data = self.newpath+'/data'
         filenames = [f for f in listdir(newpath_data) if isfile(join(newpath_data, f))]
 
         for i in range(len(filenames)):
@@ -376,8 +379,8 @@ class HAWC_design_functions:
             if prefix == 'DTU_10MW_RWT':
                 os.rename(newpath_data+ '/' + filenames[i], newpath_data+ '/' +self.new_turbine_name+filenames[i][12:])
 
-        ae_path = newpath_data +'/'+ self.new_turbine_name +'_ae.dat'
-        with open(ae_path, 'r') as file:
+        newpath_ae = self.newpath +'/data/'+self.new_turbine_name+'_ae.dat'
+        with open(newpath_ae, 'r') as file:
             contents = file.readlines()
 
         N = len(self.r_lst) + 3
@@ -390,9 +393,9 @@ class HAWC_design_functions:
         ae_arr[3:,2] = np.array(self.tcratio)
 
 
-        np.savetxt(ae_path, ae_arr, delimiter='\t', fmt=' %s')
+        np.savetxt(newpath_ae, ae_arr, delimiter='\t', fmt=' %s')
 
-        with open(ae_path, 'r') as file:
+        with open(newpath_ae, 'r') as file:
             contents = file.readlines()
 
             for i in range(len(contents)):
@@ -402,10 +405,10 @@ class HAWC_design_functions:
                 else:
                     contents[i] = contents[i][1:-1]+'\t ;'+contents[i][-1]
 
-        with open(ae_path, 'w') as file:
+        with open(newpath_ae, 'w') as file:
             file.writelines(contents)
 
-    def Make_htc(self, omega_rated, losses, R_ref, tsr=0, omega_min=0):
+    def Make_htc_steady(self, omega_rated, losses, R_ref, tsr=0, omega_min=0):
 
         print('>> Making htc file...')
 
@@ -417,30 +420,38 @@ class HAWC_design_functions:
         self.losses = losses
         self.max_power = 10000*(1+self.losses)
 
-        new_path = './'+ self.new_turbine_name
 
-        filenames = [f for f in listdir(new_path) if isfile(join(new_path, f))]
+        filenames = [f for f in listdir(self.newpath) if isfile(join(self.newpath, f))]
         for i in range(len(filenames)):
             prefix = filenames[i][0:12]
             if prefix == 'DTU_10MW_RWT':
-                os.rename(new_path+ '/' + filenames[i], new_path+ '/' + self.new_turbine_name+filenames[i][12:])
+                os.rename(self.newpath+ '/' + filenames[i], self.newpath+ '/' + self.new_turbine_name+filenames[i][12:])
 
-        filenames = [f for f in listdir(new_path) if isfile(join(new_path, f))]
-        self.htc_steady_path = new_path+'/'+filenames[1]
-        self.htc_unsteady_path = new_path+'/'+filenames[0]
+        filenames = [f for f in listdir(self.newpath) if isfile(join(self.newpath, f))]
+        self.newpath_htc_steady = self.newpath+'/'+filenames[1]
+        self.newpath_htc_unsteady = self.newpath+'/'+filenames[0]
 
         ratio = (self.R - 2.8)/(R_ref - 2.8)
-        with open(self.htc_steady_path, 'r') as file:
+        with open(self.oldpath+'/DTU_10MW_RWT_hs2.htc', 'r') as file:
             contents = file.readlines()
-            c2_block = contents[107:134]
+            for l, line in enumerate(contents):
+                if line.lstrip().startswith('name        blade1'):
+                    idx = l+11
+            c2_block = contents[idx:idx+27]
+            self.c2_block_original = np.zeros((27, 5))
+            self.c2_block_new = np.zeros((27, 5))
             for i in range(len(c2_block)):
                 lst = re.split(r'\t+', c2_block[i])
+                self.c2_block_original[i,:] = lst[2:7]
                 lst[3] = str(float(lst[3])*ratio)
                 lst[4] = str(float(lst[4])*ratio)
                 lst[5] = str(float(lst[5])*ratio)
                 twist = -np.interp(float(lst[5]), self.r_lst, self.beta)
                 lst[6] = str(twist)
-                contents[107+i] = '\t'.join(map(str,lst))
+                contents[idx+i] = '\t'.join(map(str,lst))
+
+                self.c2_block_new[i,:] = lst[2:7]
+
 
             for i, line in enumerate(contents):
 
@@ -450,12 +461,22 @@ class HAWC_design_functions:
                     contents[i] = ('    opt_lambda '+str(tsr)+' ; [-]\n')
                 if line.lstrip().startswith('maxpow'):
                     contents[i] = ('    maxpow '+str(self.max_power)+' ; [kW]\n')
-
-        with open(self.htc_steady_path, 'w') as file:
+                if line.lstrip().startswith('filename'):
+                    pos = contents[i].find('DTU_10MW_RWT')
+                    contents[i] = contents[i].replace(contents[i][pos:pos+12], self.new_turbine_name)
+                if line.lstrip().startswith('ae_filename'):
+                    pos = contents[i].find('DTU_10MW_RWT')
+                    contents[i] = contents[i].replace(contents[i][pos:pos+12], self.new_turbine_name)
+                if line.lstrip().startswith('pc_filename'):
+                    pos = contents[i].find('DTU_10MW_RWT')
+                    contents[i] = contents[i].replace(contents[i][pos:pos+12], self.new_turbine_name)
+        with open(self.newpath_htc_steady, 'w') as file:
             file.writelines(contents)
 
 
-    def Define_htc_mode(self, mode, blade_dist=False, control_lst = 0):
+
+
+    def Define_htc_steady_mode(self, mode, blade_distributions=False, control_lst = 0, properties = False):
 
 
         print('>> Modifying htc file...')
@@ -468,7 +489,7 @@ class HAWC_design_functions:
         control_type = control_lst[5]
 
         opt_path = './data/'+str(self.new_turbine_name)+'.opt'
-        with open(self.htc_steady_path, 'r') as file:
+        with open(self.newpath_htc_steady, 'r') as file:
             contents = file.readlines()
             for i, line in enumerate(contents):
 
@@ -508,12 +529,91 @@ class HAWC_design_functions:
                     print('  Invalid htc mode')
 
 
-                if blade_dist:
+                if blade_distributions:
                     if line.lstrip().startswith(';save_induction'):
                         contents[i] = ('  save_induction;\n')
+                else:
+                    if line.lstrip().startswith('save_induction'):
+                        contents[i] = ('  ;save_induction;\n')
+                if properties:
+                    if line.lstrip().startswith(';body_output_file_name'):
+                        contents[i] = ('body_output_file_name ./info/body.dat;\n')
+                    if line.lstrip().startswith(';beam_output_file_name'):
+                        contents[i] = ('beam_output_file_name ./info/beam.dat;\n')
+                    if line.lstrip().startswith('nbodies     10'):
+                        contents[i] = ('    nbodies     1')
 
-
-        with open(self.htc_steady_path, 'w') as file:
+        with open(self.newpath_htc_steady, 'w') as file:
             file.writelines(contents)
+
+    def Make_st_file(self):
+
+        newpath_st = './'+ self.new_turbine_name +'/data/'+ self.new_turbine_name +'_Blade_st.dat'
+        oldpath_st1 = './DTU10MW/structures/st_original_flexible.dat'
+        oldpath_st2 = './DTU10MW/structures/st_original_stiff.dat'
+
+        paths = [oldpath_st1, oldpath_st2]
+
+        s_f_0 = [8,9,13,14,16]
+        s_f_1 = [0,2,3,4,5,6,7,17,18]
+        s_f_2 = [1,15]
+        s_f_4 = [10,11,12]
+
+        files = []
+        for f_idx in range(2):
+
+            st_original = np.loadtxt(paths[f_idx], skiprows=5)
+            with open(paths[f_idx]) as f:
+                a = f.readlines()
+            col_name = a[3].split()
+            #
+            c2_original = self.c2_block_original
+            curve_original = np.cumsum ( np.linalg.norm (np.diff (c2_original[:,1:4],
+                                                                  axis=0), axis=1))
+            #
+            c2_new = self.c2_block_new
+            curve_new = np.cumsum ( np.linalg.norm (np.diff (c2_new[:,1:4],
+                                                                  axis=0), axis=1))
+            #
+            s_r = curve_new[-1]/curve_original[-1]
+            #
+            st_new = np.zeros_like(st_original)
+            #
+            list_0 = [col_name[i] for i in s_f_0]
+            list_1 = [col_name[i] for i in s_f_1]
+            list_2 = [col_name[i] for i in s_f_2]
+            list_4 = [col_name[i] for i in s_f_4]
+            #
+            s_r = (97.77-2.8)/(178.3/2-2.8)
+            #
+            for i in s_f_0:
+                st_new[:,i] = st_original[:,i] * s_r ** 0.0
+            #
+            for i in s_f_1:
+                st_new[:,i] = st_original[:,i] * s_r ** 1.0
+            #
+            for i in s_f_2:
+                st_new[:,i] = st_original[:,i] * s_r ** 2.0
+            #
+            for i in s_f_4:
+                st_new[:,i] = st_original[:,i] * s_r ** 4.0
+            # ============================================================================
+            #
+            b = []
+            if f_idx == 0:
+                for i in range(3):
+                    b += a[i]
+            b += ('    {:7s}    '*19).format(*(col_name))
+            b += '\n'
+            b += a[4]
+            for i, i_t in enumerate(st_new):
+                b += ('{:15.6e}').format((st_original[i,0]*s_r))
+                b += ('{:15.6e}'*18).format(*(i_t[1:]))
+                b+= '\n'
+            b = ''.join(b)
+            files.append(b)
+        fp = open(newpath_st,"w")
+        fp.writelines(files[0]+files[1])
+        fp.close()
 
 

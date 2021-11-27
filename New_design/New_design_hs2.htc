@@ -1,4 +1,6 @@
 begin new_htc_structure;
+body_output_file_name ./info/body.dat;
+beam_output_file_name ./info/beam.dat;
 ;-------------------------------------------------------------------------------------------------------------------------------
   begin main_body;         tower 115m
     name        tower ;            
@@ -7,7 +9,7 @@ begin new_htc_structure;
     node_distribution     c2_def ;
     damping_posdef   0.0 0.0 0.0 4.12E-03 4.12E-03 4.5E-04  ; Mx My Mz Kx Ky Kz , M´s raises overall level, K´s raises high freguency level "tuned by Larh"
      begin timoschenko_input;
-      filename ./data/DTU_10MW_RWT_Tower_st.dat;
+      filename ./data/New_design_Tower_st.dat;
       set 1 1 ; 
     end timoschenko_input;
     begin c2_def;              Definition of centerline (main_body coordinates)
@@ -34,7 +36,7 @@ begin new_htc_structure;
     damping_posdef  0.0  0.0  0.0  7.00E-03  7.00E-03  7.00E-03  ;   "changed by Larh"	
 	concentrated_mass	2.0	0.0	2.6870E+00	3.0061E-01	4.4604E+05	4.1060E+06	4.1060E+05	4.1060E+06	;	Nacelle mass and inertia "corrected by Anyd 25/4/13"
 	begin timoschenko_input;
-      filename ./data/DTU_10MW_RWT_Towertop_st.dat ;
+      filename ./data/New_design_Towertop_st.dat ;
       set 1 2 ;                
     end timoschenko_input;
     begin c2_def;              Definition of centerline (main_body coordinates)
@@ -53,7 +55,7 @@ begin new_htc_structure;
     concentrated_mass	1.0	0.0	0.0	0.0	0.0	0.0	0.0	3.751E+06	;	generator equivalent slow shaft "re_tuned by Anyd 20/2/13"  
     concentrated_mass	5.0	0.0	0.0	0.0	1.0552E+05	0.0	0.0	3.257E+05	;	hub mass and inertia;	"re_tuned by Anyd 20/2/13"  
 	begin timoschenko_input;
-      filename ./data/DTU_10MW_RWT_Shaft_st.dat ;
+      filename ./data/New_design_Shaft_st.dat ;
       set 1 1 ;                
     end timoschenko_input;
     begin c2_def;              Definition of centerline (main_body coordinates)
@@ -73,7 +75,7 @@ begin new_htc_structure;
     node_distribution     c2_def ;
     damping_posdef  0.0  0.0  0.0  3.00E-06  3.00E-06  2.00E-05;   "changed by Larh"	
 	begin timoschenko_input;
-      filename ./data/DTU_10MW_RWT_Hub_st.dat ;
+      filename ./data/New_design_Hub_st.dat ;
       set 1 2 ;                
     end timoschenko_input;
     begin c2_def;              Definition of centerline (main_body coordinates)
@@ -96,42 +98,41 @@ begin new_htc_structure;
   begin main_body;
     name        blade1 ;        
     type        timoschenko ;
-    nbodies     10 ;
-    node_distribution    c2_def;
+    nbodies     1    node_distribution    c2_def;
 	damping_posdef   0.0 0.0 0.0 1.53e-3 2.55e-3 3.3e-4 ; " 3% damping tuned by tkim 23/03/13 unable to fit 3rd and higher mode"
     begin timoschenko_input ;
-      filename ./data/DTU_10MW_RWT_Blade_st.dat;
+      filename ./data/New_design_Blade_st.dat;
       set 1 1 ;                set subset
     end timoschenko_input;
     begin c2_def;              Definition of centerline (main_body coordinates)
 		nsec 27 ;
-	sec	1	0.0	0.00015001189257386844	9.508796939942426e-16	-25.0	;
-	sec	2	-4.4210684474699716e-05	-0.026148019282369733	6.423575188718314	-25.0	;
-	sec	3	-0.015605219444299316	-0.053369417978774286	12.847150377436629	-25.0	;
-	sec	4	-0.040518841694570346	-0.05852969004704467	14.988427754678584	-23.040850909450757	;
-	sec	5	-0.1158988541766609	-0.0604165081991442	18.629460055065195	-18.99763322016803	;
-	sec	6	-0.27114553229098876	-0.04565234886622106	22.27267637101597	-15.718035323839917	;
-	sec	7	-0.48319417284576915	-0.027488191185909328	26.132388582743843	-12.828458658822326	;
-	sec	8	-0.6178687090607077	-0.01650128677120823	28.27764857660281	-11.412299176585872	;
-	sec	9	-0.8547508912950729	-0.010455803218097873	32.13928786088731	-9.116329235806806	;
-	sec	10	-1.2346839517904655	-0.03860483040750524	39.00202147334098	-5.655327576452589	;
-	sec	11	-1.5141137548831716	-0.1074390056531189	45.859616225643705	-2.9021312766309797	;
-	sec	12	-1.6938560946221575	-0.20153496092423206	52.71378507117912	-0.798434164481605	;
-	sec	13	-1.792595010039677	-0.31878062469879426	59.56645508250382	0.6757890931394983	;
-	sec	14	-1.8284663950852094	-0.45931560267757343	66.41848273630964	1.5817938454722014	;
-	sec	15	-1.8186575957720363	-0.6222688580649798	73.27093862846138	2.3260008219779	;
-	sec	16	-1.6999349379424145	-0.9904596231153957	86.11958784010872	3.4133492955239717	;
-	sec	17	-1.5337013768253036	-1.4740756107318904	99.82599845862288	3.8683811069952165	;
-	sec	18	-1.3582821031883243	-2.055580460649264	113.532837315483	3.8683811069952165	;
-	sec	19	-1.1844622997733365	-2.749804066786535	127.23924793399716	3.8683811069952165	;
-	sec	20	-1.017969654456946	-3.5629858618436834	140.94501619499252	3.8683811069952165	;
-	sec	21	-0.86328568152915	-4.512411686653547	154.649927979296	3.8683811069952165	;
-	sec	22	-0.7067752720560284	-5.687647591264153	169.2111023362556	3.8683811069952165	;
-	sec	23	-0.6640692030096995	-5.971398319267138	172.42310404978772	3.8683811069952165	;
-	sec	24	-0.6139203515113755	-6.263349811594385	175.63574812083868	3.8683811069952165	;
-	sec	25	-0.5477660918344953	-6.564401368772316	178.84817807271673	3.8683811069952165	;
-	sec	26	-0.445134489852613	-6.872197679898404	182.06060802459476	3.8683811069952165	;
-	sec	27	-0.19248028933821473	-7.144835622824904	184.9250943204172	3.8683811069952165	;
+	sec	1	0.0	7.705522228921945e-05	4.884295833742102e-16	-25.0	;
+	sec	2	-2.270929365202849e-05	-0.013431211377015684	3.299538493686245	-25.0	;
+	sec	3	-0.008015788831944906	-0.02741377563632634	6.59907698737249	-25.0	;
+	sec	4	-0.02081293889509055	-0.03006440489292096	7.698967145781154	-25.0	;
+	sec	5	-0.05953269316464927	-0.031033589333133063	9.569222553234036	-25.0	;
+	sec	6	-0.13927681935699007	-0.02344982007462814	11.440599803774772	-25.0	;
+	sec	7	-0.2481978845720667	-0.014119605091415091	13.42318250001438	-24.965507837501995	;
+	sec	8	-0.31737490878452795	-0.008476063453352493	14.52511837228913	-23.624672083896908	;
+	sec	9	-0.4390519898161956	-0.00537073579540462	16.508690930076845	-21.241129564866945	;
+	sec	10	-0.6342086932560913	-0.019829786408588505	20.03380787211477	-17.656400054971858	;
+	sec	11	-0.7777408174237721	-0.05518720096846448	23.55628518335775	-14.700313823830534	;
+	sec	12	-0.8700674037079361	-0.1035206005778439	27.07700274073743	-12.190253068261232	;
+	sec	13	-0.920785709740552	-0.16374509698000272	30.596950405801916	-9.99841638431027	;
+	sec	14	-0.9392114325354605	-0.23593240014487038	34.11656811701704	-8.044109886389991	;
+	sec	15	-0.9341730372556015	-0.319635092652703	37.636405797465066	-6.287048844766106	;
+	sec	16	-0.8731898669691278	-0.5087602397261404	44.23625267715275	-3.4915810847822533	;
+	sec	17	-0.7878022101371861	-0.7571747939926258	51.276697930363994	-1.1920678310021664	;
+	sec	18	-0.697696213259273	-1.055871015364396	58.31736315280817	0.4891155269889968	;
+	sec	19	-0.6084118014662877	-1.4124664383772076	65.35780840601942	1.453278698137435	;
+	sec	20	-0.5228910632484339	-1.830166014754595	72.3979237053813	2.238674822262095	;
+	sec	21	-0.44343597662814005	-2.3178488025830677	79.43759906627737	2.890218307695645	;
+	sec	22	-0.36304272122947473	-2.921521366926257	86.9171029083818	3.4705714477153315	;
+	sec	23	-0.341106289477284	-3.067272980654024	88.56698213984139	3.585796138782003	;
+	sec	24	-0.3153467924570755	-3.2172370051920645	90.21719132515032	3.696953993212627	;
+	sec	25	-0.28136594535676546	-3.371875375929493	91.86729052584282	3.804176094979339	;
+	sec	26	-0.2286481189969757	-3.529978262085292	93.5173897265353	3.8683811069952165	;
+	sec	27	-0.09886957111714377	-3.670021674218982	94.98876392548645	3.8683811069952165	;
      end c2_def ;                                 
    end main_body;
 ;
@@ -274,8 +275,8 @@ begin aero ;
   link 1 mbdy_c2_def blade1;
   link 2 mbdy_c2_def blade2;
   link 3 mbdy_c2_def blade3;
-  ae_filename        ./data/DTU_10MW_RWT_ae.dat ;
-  pc_filename        ./data/DTU_10MW_RWT_pc.dat ;
+  ae_filename        ./data/New_design_ae.dat ;
+  pc_filename        ./data/New_design_pc.dat ;
   induction_method   1 ;     0=none, 1=normal
   aerocalc_method    1 ;     0=ingen aerodynamic, 1=med aerodynamic
   aerosections       50 ; def. 50
@@ -310,19 +311,19 @@ begin hawcstab2 ;
 	set_torque_limit 0;
   end operational_data ;
   begin controller_tuning ;
-    partial_load 0.5 0.7 ; fn [hz], zeta [-]
-    full_load 0.5 0.7 ; fn [hz], zeta [-]
-    gain_scheduling 1 ; 1 linear, 2 quadratic
+    partial_load 0.05 0.7; fn [hz], zeta [-]
+    full_load 0.05 0.7 ; fn [hz], zeta [-]
+    gain_scheduling 2 ; 1 linear, 2 quadratic
     constant_power 1; 0 constant torque, 1 constant power at full load	
   end controller_tuning ;
   ; Operational data
-operational_data_filename	./data/New_design.opt ;file with operational data points
+  ;operational_data_filename	./New_design.opt ;file with operational data points
   ; HAWC2S commands (uncomment as needed);
-  ;compute_optimal_pitch_angle use_operational_data;
+  compute_optimal_pitch_angle use_operational_data;
   compute_steady_states	bladedeform tipcorrect induction nogradients;	compute steady states using hawcstab2 (need for other commands)
-  compute_controller_input;
+  ;compute_controller_input;
   save_power;	save steady-state values to .pwr
-  save_induction;
+  ;save_induction;	save spanwise values to many .ind files, 3 for each wind speed
   
 end hawcstab2 ;
 exit;
