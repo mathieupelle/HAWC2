@@ -103,7 +103,7 @@ begin new_htc_structure;
 	damping_posdef   0.0 0.0 0.0 1.53e-3 2.55e-3 3.3e-4 ; " 3% damping tuned by tkim 23/03/13 unable to fit 3rd and higher mode"
     begin timoschenko_input ;
       filename ./data/V2_Blade_st.dat;
-      set 1 1 ;                set subset
+      set 1 2 ;                set subset
     end timoschenko_input;
     begin c2_def;              Definition of centerline (main_body coordinates)
 		nsec 27 ;
@@ -312,19 +312,19 @@ begin hawcstab2 ;
 	set_torque_limit 0;
   end operational_data ;
   begin controller_tuning ;
-    partial_load 0.05 0.7; fn [hz], zeta [-]
+    partial_load 0.05 0.7 ; fn [hz], zeta [-]
     full_load 0.05 0.7 ; fn [hz], zeta [-]
     gain_scheduling 2 ; 1 linear, 2 quadratic
     constant_power 1; 0 constant torque, 1 constant power at full load	
   end controller_tuning ;
   ; Operational data
-  operational_data_filename	./DTU_10MW.opt ;file with operational data points
+  operational_data_filename	./data/V2_hs2_rigid.opt ;file with operational data points
   ; HAWC2S commands (uncomment as needed);
-  compute_optimal_pitch_angle use_operational_data;
+  ;compute_optimal_pitch_angle use_operational_data;
   compute_steady_states	bladedeform tipcorrect induction nogradients;	compute steady states using hawcstab2 (need for other commands)
-  ;compute_controller_input;
+  compute_controller_input;
   save_power;	save steady-state values to .pwr
-  save_induction;	save spanwise values to many .ind files, 3 for each wind speed
+  ;save_induction;
   
 end hawcstab2 ;
 exit;

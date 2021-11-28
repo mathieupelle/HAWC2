@@ -39,12 +39,13 @@ def load_hawc_binary(dat_path):
 
 #%% Importing datasets
 
-cases = ['./V2/results/hawc2/control/f0.5_eta0.7.dat']
+cases = ['./V2/results/hawc2/control/f0.05_eta0.7.dat', './V2/results/hawc2/control/f0.05_eta0.75.dat', \
+         './V2/results/hawc2/control/f0.05_eta0.7ct.dat']
 
 data_lst = []
 for c in range(len(cases)):
     path = cases[c]
-    data = load_hawc_binary(path)
+    data = load_hawc_ascii(path)
     data_lst.append(data)
 
 #%% Plotting
@@ -54,7 +55,7 @@ irotspd = 9  # column index of rotor speed
 iwspd = 14 # column index of wind speed
 ipitch = 70 # column index of pitch angle
 iepower = 99 # column index of electrical power
-itorque = 95 # column index of generator torque
+itorque = 69 # column index of generator torque
 
 data_all = data_lst
 time_shift = 0
