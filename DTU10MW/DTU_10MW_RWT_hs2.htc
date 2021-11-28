@@ -320,7 +320,7 @@ begin hawcstab2 ;
   ; Operational data
   operational_data_filename	./DTU_10MW.opt ;file with operational data points
   ; HAWC2S commands (uncomment as needed);
-  ;compute_optimal_pitch_angle use_operational_data;
+  compute_optimal_pitch_angle use_operational_data;
   compute_steady_states	bladedeform tipcorrect induction nogradients;	compute steady states using hawcstab2 (need for other commands)
   ;compute_controller_input;
   save_power;	save steady-state values to .pwr

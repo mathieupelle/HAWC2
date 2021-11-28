@@ -18,7 +18,7 @@
       node_distribution	c2_def;
       damping_posdef	0 0 0 0.00412 0.00412 0.00045;	Mx My Mz Kx Ky Kz , M´s raises overall level, K´s raises high freguency level "tuned by Larh"
       begin timoschenko_input;
-        filename	./data/dtu_10mw_rwt_tower_st.dat;
+        filename	./data/DTU_10MW_RWT_Tower_st.dat;
         set	1 1;
       end timoschenko_input;
       begin c2_def;	Definition of centerline (main_body coordinates)
@@ -45,7 +45,7 @@
       damping_posdef	0 0 0 0.007 0.007 0.007;	"changed by Larh"
       concentrated_mass	2 0 2.687 0.30061 446040 4106000 410600 4106000;	Nacelle mass and inertia "corrected by Anyd 25/4/13"
       begin timoschenko_input;
-        filename	./data/dtu_10mw_rwt_towertop_st.dat;
+        filename	./data/DTU_10MW_RWT_Towertop_st.dat;
         set	1 2;
       end timoschenko_input;
       begin c2_def;	Definition of centerline (main_body coordinates)
@@ -64,7 +64,7 @@
       concentrated_mass	1 0 0 0 0 0 0 3751000;	generator equivalent slow shaft "re_tuned by Anyd 20/2/13"
       concentrated_mass	5 0 0 0 105520 0 0 325700;	hub mass and inertia;	"re_tuned by Anyd 20/2/13"
       begin timoschenko_input;
-        filename	./data/dtu_10mw_rwt_shaft_st.dat;
+        filename	./data/DTU_10MW_RWT_Shaft_st.dat;
         set	1 1;
       end timoschenko_input;
       begin c2_def;	Definition of centerline (main_body coordinates)
@@ -84,7 +84,7 @@
       node_distribution	c2_def;
       damping_posdef	0 0 0 3e-06 3e-06 2e-05;	"changed by Larh"
       begin timoschenko_input;
-        filename	./data/dtu_10mw_rwt_hub_st.dat;
+        filename	./data/DTU_10MW_RWT_Shaft_st.dat;
         set	1 2;
       end timoschenko_input;
       begin c2_def;	Definition of centerline (main_body coordinates)
@@ -111,40 +111,40 @@
       node_distribution	c2_def;
       damping_posdef	0 0 0 0.00153 0.00255 0.00033;	" 3% damping tuned by tkim 23/03/13 unable to fit 3rd and higher mode"
       begin timoschenko_input;
-        filename	./data/dtu_10mw_rwt_blade_st.dat;
+        filename	./data/DTU_10MW_RWT_Blade_st.dat;
         set	1 1;	set subset
       end timoschenko_input;
-      begin c2_def;	Definition of centerline (main_body coordinates)
-        nsec	27;
-        sec	1 0 7.006e-05 4.44089e-16 -14.5;
-        sec	2 -2.06477e-05 -0.0122119 3 -14.5;
-        sec	3 -0.0072881 -0.0249251 6 -14.4851;
-        sec	4 -0.0189235 -0.0273351 7.00004 -14.461;
-        sec	5 -0.0541282 -0.0282163 8.70051 -14.3388;
-        sec	6 -0.126633 -0.021321 10.402 -14.0201;
-        sec	7 -0.225666 -0.0128378 12.2046 -13.3904;
-        sec	8 -0.288563 -0.00770659 13.2065 -12.9371;
-        sec	9 -0.399194 -0.00488317 15.01 -11.9445;
-        sec	10 -0.576634 -0.0180296 18.2151 -9.98243;
-        sec	11 -0.707136 -0.0501772 21.4178 -8.45147;
-        sec	12 -0.791081 -0.0941228 24.6189 -7.46417;
-        sec	13 -0.837195 -0.14888 27.8193 -6.72916;
-        sec	14 -0.853948 -0.214514 31.0194 -6.08842;
-        sec	15 -0.849367 -0.290618 34.2197 -5.49322;
-        sec	16 -0.79392 -0.462574 40.2204 -4.39222;
-        sec	17 -0.716284 -0.688437 46.6217 -3.09315;
-        sec	18 -0.634358 -0.960017 53.0232 -1.75629;
-        sec	19 -0.553179 -1.28424 59.4245 -0.50065;
-        sec	20 -0.475422 -1.66402 65.8255 0.601964;
-        sec	21 -0.40318 -2.10743 72.2261 1.5556;
-        sec	22 -0.330085 -2.6563 79.0266 2.51935;
-        sec	23 -0.31014 -2.78882 80.5267 2.7295;
-        sec	24 -0.286719 -2.92517 82.0271 2.93201;
-        sec	25 -0.255823 -3.06577 83.5274 3.11874;
-        sec	26 -0.207891 -3.20952 85.0277 3.28847;
-        sec	27 -0.089894 -3.33685 86.3655 3.42796;
-      end c2_def;
-    end main_body;
+    begin c2_def;              Definition of centerline (main_body coordinates)
+		nsec 27 ;
+			sec	1	0.00000E+00	7.00600E-05	4.44089E-16	-1.45000E+01	;
+			sec	2	-2.06477E-05	-1.22119E-02	3.00000E+00	-1.45000E+01	;
+			sec	3	-7.28810E-03	-2.49251E-02	6.00000E+00	-1.44851E+01	;
+			sec	4	-1.89235E-02	-2.73351E-02	7.00004E+00	-1.44610E+01	;
+			sec	5	-5.41282E-02	-2.82163E-02	8.70051E+00	-1.43388E+01	;
+			sec	6	-1.26633E-01	-2.13210E-02	1.04020E+01	-1.40201E+01	;
+			sec	7	-2.25666E-01	-1.28378E-02	1.22046E+01	-1.33904E+01	;
+			sec	8	-2.88563E-01	-7.70659E-03	1.32065E+01	-1.29371E+01	;
+			sec	9	-3.99194E-01	-4.88317E-03	1.50100E+01	-1.19445E+01	;
+			sec	10	-5.76634E-01	-1.80296E-02	1.82151E+01	-9.98243E+00	;
+			sec	11	-7.07136E-01	-5.01772E-02	2.14178E+01	-8.45147E+00	;
+			sec	12	-7.91081E-01	-9.41228E-02	2.46189E+01	-7.46417E+00	;
+			sec	13	-8.37195E-01	-1.48880E-01	2.78193E+01	-6.72916E+00	;
+			sec	14	-8.53948E-01	-2.14514E-01	3.10194E+01	-6.08842E+00	;
+			sec	15	-8.49367E-01	-2.90618E-01	3.42197E+01	-5.49322E+00	;
+			sec	16	-7.93920E-01	-4.62574E-01	4.02204E+01	-4.39222E+00	;
+			sec	17	-7.16284E-01	-6.88437E-01	4.66217E+01	-3.09315E+00	;
+			sec	18	-6.34358E-01	-9.60017E-01	5.30232E+01	-1.75629E+00	;
+			sec	19	-5.53179E-01	-1.28424E+00	5.94245E+01	-5.00650E-01	;
+			sec	20	-4.75422E-01	-1.66402E+00	6.58255E+01	6.01964E-01	;
+			sec	21	-4.03180E-01	-2.10743E+00	7.22261E+01	1.55560E+00	;
+			sec	22	-3.30085E-01	-2.65630E+00	7.90266E+01	2.51935E+00	;
+			sec	23	-3.10140E-01	-2.78882E+00	8.05267E+01	2.72950E+00	;
+			sec	24	-2.86719E-01	-2.92517E+00	8.20271E+01	2.93201E+00	;
+			sec	25	-2.55823E-01	-3.06577E+00	8.35274E+01	3.11874E+00	;
+			sec	26	-2.07891E-01	-3.20952E+00	8.50277E+01	3.28847E+00	;
+			sec	27	-8.98940E-02	-3.33685E+00	8.63655E+01	3.42796E+00	;
+     end c2_def ;                                 
+   end main_body;
 ;
     begin main_body;
       name	blade2;
@@ -346,8 +346,8 @@
     link	1 mbdy_c2_def blade1;
     link	2 mbdy_c2_def blade2;
     link	3 mbdy_c2_def blade3;
-    ae_filename	./data/dtu_10mw_rwt_ae.dat;
-    pc_filename	./data/dtu_10mw_rwt_pc.dat;
+    ae_filename	./data/DTU_10MW_RWT_ae.dat;
+    pc_filename	./data/DTU_10MW_RWT_pc.dat;
     induction_method	1;	0=none, 1=normal
     aerocalc_method	1;	0=ingen aerodynamic, 1=med aerodynamic
     aerosections	50;	def. 50
@@ -629,7 +629,7 @@
   begin output;
     filename	./res/DTU_10MW_RWT;
 	time 0 1000; 
-    data_format	hawc_binary;
+    data_format	hawc_ascii;
     buffer	1;	
 ;
     general time;

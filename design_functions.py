@@ -8,6 +8,7 @@ Created on Sun Nov 14 10:54:40 2021
 from os import listdir
 from os.path import isfile, join
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
 from  scipy.optimize  import  least_squares
 from scipy.interpolate import CubicSpline
@@ -27,23 +28,23 @@ class HAWC_design_functions:
         turb_intensities = [0.16, 0.14, 0.12]
         I_ref = turb_intensities[turb_classes.index(turb_class_ref)]
         self.I = turb_intensities[turb_classes.index(turb_class_target)]
-
+        self.R_ref = R_ref
 
         V_ref_max = V_rated_ref*(1+2*I_ref)
 
-        R2_guess = R_ref*1.1
+        R2_guess = self.R_ref*1.1
         dif = 1e12;
         it = 0;
         while dif>1e-6:
 
-            self.V_rated = (V_rated_ref**3*R_ref**2/R2_guess**2)**(1/3)
+            self.V_rated = (V_rated_ref**3*self.R_ref**2/R2_guess**2)**(1/3)
             V_new_max = self.V_rated*(1+2*self.I)
 
-            self.R = R_ref*V_ref_max/V_new_max
+            self.R = self.R_ref*V_ref_max/V_new_max
             dif = abs(self.R - R2_guess)
             R2_guess = self.R
             it = it + 1
-
+            self.R = self.R*0.975
         print('   New rotor radius: '+str(round(self.R,3))+' m')
 
 
@@ -106,7 +107,7 @@ class HAWC_design_functions:
 
 
 
-    def Fit_Polynomials(self, order, R_ref, plotting=True):
+    def Fit_Polynomials(self, order, plotting=True):
         print('>> Fitting polynomials...')
 
         y = [self.cl_des, self.clcd_des, self.alpha_des]
@@ -136,17 +137,17 @@ class HAWC_design_functions:
 
         t_ref = data[:,2]*data[:,1]/100
         self.t_max = max(t_ref)
-        t = t_ref*self.R/R_ref
+        t = t_ref*self.R/self.R_ref
         r = np.linspace(0, self.R , len(t_ref))
 
         z = np.polyfit(r, t, order[-1])
         self.coefs[names[-1]] = z
         p = np.poly1d(z)
-        y = p(np.linspace(0, R_ref, 100))
+        y = p(np.linspace(0, self.R_ref, 100))
 
         if plotting:
             plt.figure()
-            plt.plot(data[:,0]/R_ref, t_ref, 'x', label='DTU 10MW')
+            plt.plot(data[:,0]/self.R_ref, t_ref, 'x', label='DTU 10MW')
             plt.plot(r/self.R, t, 'x', label='New design')
             plt.plot(np.linspace(0, 1, 100), y, '--k',  label='Fit')
             plt.xlabel('r/R [-]')
@@ -298,18 +299,19 @@ class HAWC_design_functions:
                     plt.axhline(y=8/9, color='k', linestyle='--', alpha=0.5)
         print('>> CP: '+ str(round(self.CP[0],3)) + ', CT:' + str(round(self.CT[0],3)))
 
-    def Limits_and_Smoothing(self, R_ref, plotting=True):
+    def Limits_and_Smoothing(self, plotting=True, spline_plot=True):
         print('>> Tuning blade design...')
 
         ae_path = './DTU10MW/data/bladedat.txt'
+        redesign1_data = pd.read_csv('./V1/redesign_geometry.txt')
         data = np.genfromtxt(ae_path, delimiter='\t')
         r_ref = data[:,0]
         c_ref = data[:,2]
 
         a = r_ref[0:6]
         b = c_ref[0:6]
-        b[4] = b[4]*1.02
-        b[5] = b[5]*1.03
+        b[4] = b[4]*0.97
+        b[5] = b[5]*0.93
 
         for i in range(len(self.r_lst)):
             if self.beta[i] > 25:
@@ -322,14 +324,14 @@ class HAWC_design_functions:
 
             cs = CubicSpline(a, b)
 
-            if self.r_lst[i] < 43 and self.r_lst[i] > 9.2:
-                self.c[i] = cs(self.r_lst[i])*self.R/R_ref
+            if self.r_lst[i] < 33 and self.r_lst[i] > 9.2:
+                self.c[i] = cs(self.r_lst[i])*self.R/self.R_ref*0.985
 
-            elif self.r_lst[i] < 10:
-                self.c[i] = np.interp(self.r_lst[i], [self.r_lst[0], 10], [c_ref[0], cs(10)*self.R/R_ref])
+            elif self.r_lst[i] < 9.2:
+                self.c[i] = np.interp(self.r_lst[i], [self.r_lst[0], 9.2], [c_ref[0], cs(9.2)*self.R/self.R_ref*0.985])
 
-            if self.c[i] > self.R/R_ref*max(c_ref):
-                self.c[i] = self.R/R_ref*max(c_ref)
+            if self.c[i] > self.R/self.R_ref*max(c_ref):
+                self.c[i] = self.R/self.R_ref*max(c_ref)
 
 
 
@@ -343,6 +345,7 @@ class HAWC_design_functions:
 
         if plotting:
             labels = [r'$\beta$ [deg]', '$c$ [m]', '$t/c$ [%]', '$t$ [m]']
+            data1 = [redesign1_data['R'], redesign1_data['beta'], redesign1_data['c'], redesign1_data['tc'], redesign1_data['t']]
             data2 = [self.r_lst, self.beta, self.c, self.tcratio, self.t]
             for i in range(len(labels)):
                 plt.figure()
@@ -350,11 +353,14 @@ class HAWC_design_functions:
                 plt.xlabel('$r/R$ [-]')
                 plt.ylabel(labels[i])
                 if i == 3:
-                    plt.plot(data[:,0]/R_ref, data[:,3]*data[:,2]/100, '--k', label='DTU 10MW')
+                    plt.plot(data[:,0]/self.R_ref, data[:,3]*data[:,2]/100, '--k', label='DTU 10MW')
                 else:
-                    plt.plot(data[:,0]/R_ref, data[:,i+1], '--k', label='DTU 10MW')
+                    plt.plot(data[:,0]/self.R_ref, data[:,i+1], '--k', label='DTU 10MW')
+                if i==1 and spline_plot == True:
+                     plt.plot(a/self.R_ref, cs(a)*self.R/self.R_ref, '--.')
 
-                plt.plot(data2[0]/self.R, data2[i+1], '-b', label='New design')
+                plt.plot(data1[0]/97.77, data1[i+1], '-r', label='Redesign V1')
+                plt.plot(data2[0]/self.R, data2[i+1], '-b', label='Redesign V2')
                 plt.legend()
 
 
@@ -408,15 +414,18 @@ class HAWC_design_functions:
         with open(newpath_ae, 'w') as file:
             file.writelines(contents)
 
-    def Make_htc_steady(self, omega_rated, losses, R_ref, tsr=0, omega_min=0):
+    def Make_htc_steady(self, omega_rated, losses, tsr=0, omega_min=0):
 
-        print('>> Making htc file...')
+        print('>> Making steady htc file...')
 
         if tsr == 0:
             tsr = self.TSR
 
         self.omega_min = omega_min
+        self.V_min = self.omega_min*np.pi/30*self.R/self.TSR
         self.omega_rated = omega_rated
+        self.V_rated_old = self.V_rated
+        self.V_rated = self.omega_rated*np.pi/30*self.R/self.TSR
         self.losses = losses
         self.max_power = 10000*(1+self.losses)
 
@@ -428,10 +437,10 @@ class HAWC_design_functions:
                 os.rename(self.newpath+ '/' + filenames[i], self.newpath+ '/' + self.new_turbine_name+filenames[i][12:])
 
         filenames = [f for f in listdir(self.newpath) if isfile(join(self.newpath, f))]
-        self.newpath_htc_steady = self.newpath+'/'+filenames[1]
-        self.newpath_htc_unsteady = self.newpath+'/'+filenames[0]
+        self.newpath_htc_steady = self.newpath+'/'+self.new_turbine_name+'_hs2.htc'
+        self.newpath_htc_unsteady = self.newpath+'/'+self.new_turbine_name+'.htc'
 
-        ratio = (self.R - 2.8)/(R_ref - 2.8)
+        ratio = (self.R - 2.8)/(self.R_ref - 2.8)
         with open(self.oldpath+'/DTU_10MW_RWT_hs2.htc', 'r') as file:
             contents = file.readlines()
             for l, line in enumerate(contents):
@@ -476,19 +485,21 @@ class HAWC_design_functions:
 
 
 
-    def Define_htc_steady_mode(self, mode, blade_distributions=False, control_lst = 0, properties = False):
+    def Define_htc_steady_mode(self, mode, blade_distributions=False,
+                               control_lst = 0, properties = False, path_opt ='random', rigid = False):
 
 
-        print('>> Modifying htc file...')
+        print('>> Modifying steady htc file...')
 
-        freq1 = control_lst[0]
-        damp1 = control_lst[1]
-        freq2 = control_lst[2]
-        damp2 = control_lst[3]
-        gain_scheduling = control_lst[4]
-        control_type = control_lst[5]
+        if isinstance(control_lst, list):
+            self.control_freq1 = control_lst[0]
+            self.control_damp1 = control_lst[1]
+            self.control_freq2 = control_lst[2]
+            self.control_damp2 = control_lst[3]
+            self.control_gain_scheduling = control_lst[4]
+            self.control_type = control_lst[5]
 
-        opt_path = './data/'+str(self.new_turbine_name)+'.opt'
+        opt_path = './data/'+str(self.new_turbine_name)+'_hs2.opt'
         with open(self.newpath_htc_steady, 'r') as file:
             contents = file.readlines()
             for i, line in enumerate(contents):
@@ -512,19 +523,31 @@ class HAWC_design_functions:
                     if isinstance(control_lst, list):
 
                         if line.lstrip().startswith('partial_load'):
-                            contents[i] = ('    partial_load '+str(freq1)+' '+str(damp1)+' ; fn [hz], zeta [-]\n')
+                            contents[i] = ('    partial_load '+str(self.control_freq1)+' '+str(self.control_damp1)+' ; fn [hz], zeta [-]\n')
 
                         if line.lstrip().startswith('full_load'):
-                            contents[i] = ('    full_load '+str(freq2)+' '+str(damp2)+' ; fn [hz], zeta [-]\n')
+                            contents[i] = ('    full_load '+str(self.control_freq2)+' '+str(self.control_damp2)+' ; fn [hz], zeta [-]\n')
 
                         if line.lstrip().startswith('gain_scheduling'):
-                            contents[i] = ('    gain_scheduling '+str(gain_scheduling)+' ; 1 linear, 2 quadratic\n')
+                            contents[i] = ('    gain_scheduling '+str(self.control_gain_scheduling)+' ; 1 linear, 2 quadratic\n')
 
                         if line.lstrip().startswith('onstant_power'):
-                            contents[i] = ('    constant_power '+str(control_type)+'; 0 constant torque, 1 constant power at full load\t\n')
+                            contents[i] = ('    constant_power '+str(self.control_control_type)+'; 0 constant torque, 1 constant power at full load\t\n')
 
                     else:
                         print('  No controller settings given. Using default...')
+
+                elif mode == 'standard':
+                    if line.lstrip().startswith('compute_controller_input'):
+                        contents[i] = ('  ;compute_controller_input;\n')
+                    if line.lstrip().startswith(';operational_data_filename'):
+                        contents[i] = ('  operational_data_filename\t'+str(path_opt)+' ;file with operational data points\n')
+                    if line.lstrip().startswith('operational_data_filename'):
+                        contents[i] = ('  operational_data_filename\t'+str(path_opt)+' ;file with operational data points\n')
+                    if line.lstrip().startswith('compute_optimal_pitch_angle use_operational_data'):
+                        contents[i] = ('  ;compute_optimal_pitch_angle use_operational_data;\n')
+
+
                 else:
                     print('  Invalid htc mode')
 
@@ -541,12 +564,35 @@ class HAWC_design_functions:
                     if line.lstrip().startswith(';beam_output_file_name'):
                         contents[i] = ('beam_output_file_name ./info/beam.dat;\n')
                     if line.lstrip().startswith('nbodies     10'):
-                        contents[i] = ('    nbodies     1')
+                        contents[i] = ('    nbodies     1;\n')
+                else:
+                    if line.lstrip().startswith(';nbodies     10'):
+                        contents[i] = ('    nbodies     10;\n')
+
+                if rigid:
+                    if line.lstrip().startswith('set 1 1'):
+                        if contents[i-7].lstrip().startswith('name        blade'):
+                            contents[i] = ('      set 1 2 ;                set subset\n')
+                    if line.lstrip().startswith('compute_steady_states'):
+                        contents[i] = ('  compute_steady_states\tnobladedeform tipcorrect induction nogradients;\tcompute steady states using hawcstab2 (need for other commands)\n')
+                    if line.lstrip().startswith(';operational_data_filename'):
+                        contents[i] = ('  operational_data_filename\t'+str(path_opt)+' ;file with operational data points\n')
+                else:
+
+                    if line.lstrip().startswith('set 1 2'):
+                        if contents[i-7].lstrip().startswith('name blade1'):
+                            contents[i] = ('      set 1 1 ;                set subset\n')
+                    if line.lstrip().startswith('compute_steady_states'):
+                        contents[i] = ('  compute_steady_states\tbladedeform tipcorrect induction nogradients;\tcompute steady states using hawcstab2 (need for other commands)\n')
+
 
         with open(self.newpath_htc_steady, 'w') as file:
             file.writelines(contents)
 
+
     def Make_st_file(self):
+
+        print('>> Generating st file...')
 
         newpath_st = './'+ self.new_turbine_name +'/data/'+ self.new_turbine_name +'_Blade_st.dat'
         oldpath_st1 = './DTU10MW/structures/st_original_flexible.dat'
@@ -616,4 +662,136 @@ class HAWC_design_functions:
         fp.writelines(files[0]+files[1])
         fp.close()
 
+    def Generate_tsr_opt(self, tsr_lst, u):
 
+        header = [' '+str(len(tsr_lst))+' wind speed [m/s]          pitch [deg]     rot. speed [rpm]']
+        contents = [header]
+        for i in range(len(tsr_lst)):
+            v = u+0.001*i
+            omega = tsr_lst[i]/self.R*v*30/np.pi
+            line = ['             '+str(v)+'             0.000000             '+str(omega)]
+            contents.append(line)
+        path_tsr_opt = self.newpath+'/data/'+self.new_turbine_name+'_hs2_tsr.opt'
+        self.tsr_opt = self.new_turbine_name+'_hs2_tsr.opt'
+        a_file = open(path_tsr_opt, "w")
+        for row in contents:
+            np.savetxt(a_file, row, fmt='%s')
+
+        a_file.close()
+
+
+    def Make_htc_unsteady(self, ctrl_file):
+
+        print('>> Making unsteady htc file...')
+
+        with open (ctrl_file, 'r') as file:
+            contents = file.readlines()
+            self.K = float(contents[1].split()[2])
+            self.Kpt = float(contents[4].split()[2])
+            self.Kit = float(contents[5].split()[2])
+            self.Kpp = float(contents[7].split()[2])
+            self.Kip = float(contents[8].split()[2])
+            self.KK1 = float(contents[9].split()[2])
+            self.KK2 = float(contents[9].split()[6])
+
+
+
+        self.newpath_htc_steady = self.newpath+'/'+self.new_turbine_name+'_hs2.htc'
+        self.newpath_htc_unsteady = self.newpath+'/'+self.new_turbine_name+'.htc'
+
+        ratio = (self.R - 2.8)/(self.R_ref - 2.8)
+        with open(self.oldpath+'/DTU_10MW_RWT.htc' , 'r') as file:
+            contents = file.readlines()
+            for l, line in enumerate(contents):
+                if line.lstrip().startswith('name\tblade1'):
+                    idx = l+11
+            c2_block = contents[idx:idx+27]
+
+            for i in range(len(c2_block)):
+                lst = re.split(r'\t+', c2_block[i])
+
+                lst[3] = str(float(lst[3])*ratio)
+                lst[4] = str(float(lst[4])*ratio)
+                lst[5] = str(float(lst[5])*ratio)
+                twist = -np.interp(float(lst[5]), self.r_lst, self.beta)
+                lst[6] = str(twist)
+                contents[idx+i] = '\t'.join(map(str,lst))
+
+
+
+            line_pc = 1e12
+            line_block2 = 1e12
+            for i, line in enumerate(contents):
+
+                if line.lstrip().startswith('name	generator_servo'):
+                    line_block2 = i
+
+                if i<line_block2:
+
+                    if line.lstrip().startswith('constant\t2 '):
+                        contents[i] = ('        constant\t2 '+str(self.omega_min*np.pi/30)+';\tMinimum rotor (LSS) speed [rad/s]\n')
+                    if line.lstrip().startswith('constant\t3 '):
+                        contents[i] = ('        constant\t3 '+str(self.omega_rated*np.pi/30)+';\tRated rotor (LSS) speed [rad/s]\n')
+                    if line.lstrip().startswith('constant\t5 '):
+                        contents[i] = ('        constant\t5 0;\tMinimum pitch angle, theta_min [deg],\n')
+                    if line.lstrip().startswith('constant\t11 '):
+                        contents[i] = ('        constant\t11 '+str(self.K)+';\tOptimal Cp tracking K factor [Nm/(rad/s)^2], ;\n')
+                    if line.lstrip().startswith('constant\t12 '):
+                        contents[i] = ('        constant\t12 '+str(self.Kpt)+';\tProportional gain of torque controller [Nm/(rad/s)]\n')
+                    if line.lstrip().startswith('constant\t13 '):
+                        contents[i] = ('        constant\t13 '+str(self.Kit)+';\tIntegral gain of torque controller [Nm/rad]\n')
+                    if line.lstrip().startswith('constant\t14 '):
+                        contents[i] = ('        constant\t14 0;\tDifferential gain of torque controller [Nm/(rad/s^2)]\n')
+                    if line.lstrip().startswith('constant\t15 '):
+                        contents[i] = ('        constant\t15 '+str(self.control_type)+';\tGenerator control switch [1=constant power, 0=constant torque]\n')
+                    if line.lstrip().startswith('constant\t16 '):
+                        contents[i] = ('        constant\t16 '+str(self.Kpp)+';\tProportional gain of pitch controller [rad/(rad/s)]\n')
+                    if line.lstrip().startswith('constant\t17 '):
+                        contents[i] = ('        constant\t17 '+str(self.Kip)+';\tIntegral gain of pitch controller [rad/rad]\n')
+                    if line.lstrip().startswith('constant\t18 '):
+                        contents[i] = ('        constant\t18 0;\tDifferential gain of pitch controller [rad/(rad/s^2)]\n')
+                    if line.lstrip().startswith('constant\t21 '):
+                        contents[i] = ('        constant\t21 '+str(self.KK1)+';\tCoefficient of linear term in aerodynamic gain scheduling, KK1 [deg]\n')
+                    if line.lstrip().startswith('constant\t22 '):
+                        contents[i] = ('        constant\t22 '+str(self.KK2)+';\tCoefficient of quadratic term in aerodynamic gain scheduling, KK2 [deg^2] &\n')
+                    if line.lstrip().startswith('constant\t47 '):
+                        contents[i] = ('        constant\t47 '+str(self.R*2)+';\tNominal rotor diameter [m]\n')
+                    if line.lstrip().startswith('constant\t49 '):
+                        contents[i] = ('        constant\t49 '+str(self.TSR)+';\tOptimal tip speed ratio [-] (only used when K=constant 11 = 0 otherwise  Qg=K*Omega^2 is used)\n')
+
+                if line.lstrip().startswith('constant\t4 0.94'):
+                    contents[i] = ('        constant\t4 '+str(1-self.losses)+';\tGenerator efficiency [-]\n')
+
+
+                if line.lstrip().startswith('filename'):
+                    pos = contents[i].find('DTU_10MW_RWT')
+                    if i<line_pc:
+                        contents[i] = contents[i].replace(contents[i][pos:pos+12], self.new_turbine_name)
+                if line.lstrip().startswith('ae_filename'):
+                    pos = contents[i].find('DTU_10MW_RWT')
+                    contents[i] = contents[i].replace(contents[i][pos:pos+12], self.new_turbine_name)
+                if line.lstrip().startswith('pc_filename'):
+                    pos = contents[i].find('DTU_10MW_RWT')
+                    contents[i] = contents[i].replace(contents[i][pos:pos+12], self.new_turbine_name)
+                    line_pc = i
+
+        with open(self.newpath_htc_unsteady, 'w') as file:
+            file.writelines(contents)
+
+    def Apply_peak_shaving(self, path):
+        print('  Applying peak shaving...')
+
+        with open(self.newpath+'/'+path , 'r') as file:
+            contents = file.readlines()
+            for l, line in enumerate(contents):
+                if line.lstrip().startswith('10'):
+                    lst = line.split()
+                    new_pitch = (float(contents[l+1].split()[1])+float(lst[1]))/2
+                    contents[l] = contents[l].replace(lst[1], str(new_pitch))
+                if line.lstrip().startswith('11'):
+                    lst = line.split()
+                    new_pitch = float(lst[1])*1.25
+                    contents[l] = contents[l].replace(lst[1], str(new_pitch))
+
+        with open(self.newpath+'/'+path, 'w') as file:
+            file.writelines(contents)

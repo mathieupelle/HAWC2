@@ -10,8 +10,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 
-f1 = './DTU10MW/results/steady/ind/DTU_10MW_RWT_hs2_u8000.ind'
-f2 = './New_design/New_design_hs2_u8000.ind'
+f1 = './DTU10MW/results/hawc2s/DTU_10MW_RWT_hs2_u8000.ind'
+f2 = './V2/results/hawc2s/ind/flex/V2_hs2_u8000.ind'
 
 paths =  [f1, f2]
 leg_names = ['DTU 10MW', 'Redesign 1']
@@ -20,7 +20,7 @@ col_names = ['s', 'a', 'ap', 'phi', 'alpha', 'U0', 'FX0', 'FY0',\
              'Cl', 'Cd', 'Cm', 'Clp0', 'Cdp0', 'Cmp0', 'F', 'Fp', 'CL_FS',\
              'Cl_FSp', 'Va', 'Vt', 'Tors', 'vx', 'vy', 'chord', 'CT', 'CP', 'angle', 'v_1',\
             'v_2', 'v_3']
-ylab = ['s', 'a [-]', 'ap [-]', r'$phi_0$ [deg]', r'$\alpha_0$ [deg]', 'U0', 'FX0', 'FY0',\
+ylab = ['s', 'a [-]', 'ap [-]', r'$\phi$ [deg]', r'$\alpha$ [deg]', 'U0', 'FX0', 'FY0',\
         'M0', 'UX0', 'UY0' , 'UZ0', r'$\beta$', 'X_AC0', 'Y_AC0', 'Z_AC0',\
         '$C_l$ [-]', '$C_d$ [-]', 'Cm', 'Clp0', 'Cdp0', 'Cmp0', 'F', 'Fp', 'CL_FS',\
         'CFLps', 'Va', 'Vt', 'Tors', 'vx', 'vy', 'chord', '$C_T$ [-]', '$C_P$ [-]', 'angle', 'v_1',\
@@ -31,7 +31,11 @@ for i in range(len(idx_plot)):
     plt.figure()
     for j in range(len(paths)):
         data = pd.read_csv(paths[j], sep='\s+', skiprows = 1, names = col_names)
-        x = data['s']
+        if j==0:
+            R = 178.3/2
+        else:
+            R = 95.32742340218736
+        x = data['s']/R
         y = data[col_names[idx_plot[i]]]
         plt.plot(x, y, '-', label=leg_names[j])
 
