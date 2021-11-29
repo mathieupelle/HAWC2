@@ -1,0 +1,127 @@
+________________________________________________________________________________________________________________________
+  Version ID : 12.8.0
+                                                            Time : 22:00:01
+                                                            Date : 28:11.2021
+________________________________________________________________________________________________________________________
+  Result file : ./res/dtu_10mw_rwt.dat
+________________________________________________________________________________________________________________________
+   Scans    Channels    Time [sec]        Format
+     100000     114         1000.000       ASCII
+
+  Channel   Variable Description               
+
+      1      Time                           s          Time
+      2      bea1 angle                     deg        shaft_rot angle
+      3      bea1 angle_speed               rpm        shaft_rot angle speed
+      4      bea2 angle                     deg        pitch1 angle
+      5      bea2 angle_speed               deg/s      pitch1 angle speed
+      6      bea2 angle                     deg        pitch2 angle
+      7      bea2 angle_speed               deg/s      pitch2 angle speed
+      8      bea2 angle                     deg        pitch3 angle
+      9      bea2 angle_speed               deg/s      pitch3 angle speed
+     10       Omega                         rad/s       Rotor speed
+     11      Ae rot. torque                 kNm        Aero rotor torque
+     12      Ae rot. power                  kW         Aero rotor power
+     13      Ae rot. thrust                 kN         Aero rotor thrust
+     14      WSP gl. coo.,Vx                m/s        Free wind speed Vx, gl. coo, of gl. pos    0.00,   0.00,-119.00
+     15      WSP gl. coo.,Vy                m/s        Free wind speed Vy, gl. coo, of gl. pos    0.00,   0.00,-119.00
+     16      WSP gl. coo.,Vz                m/s        Free wind speed Vz, gl. coo, of gl. pos    0.00,   0.00,-119.00
+     17      Mx coo: tower                  kNm        MomentMx Mbdy:tower nodenr:   1 coo: tower  tower base
+     18      My coo: tower                  kNm        MomentMy Mbdy:tower nodenr:   1 coo: tower  tower base
+     19      Mz coo: tower                  kNm        MomentMz Mbdy:tower nodenr:   1 coo: tower  tower base
+     20      Mx coo: tower                  kNm        MomentMx Mbdy:tower nodenr:  11 coo: tower  tower yaw bearing
+     21      My coo: tower                  kNm        MomentMy Mbdy:tower nodenr:  11 coo: tower  tower yaw bearing
+     22      Mz coo: tower                  kNm        MomentMz Mbdy:tower nodenr:  11 coo: tower  tower yaw bearing
+     23      Mx coo: shaft                  kNm        MomentMx Mbdy:shaft nodenr:   4 coo: shaft  main bearing
+     24      My coo: shaft                  kNm        MomentMy Mbdy:shaft nodenr:   4 coo: shaft  main bearing
+     25      Mz coo: shaft                  kNm        MomentMz Mbdy:shaft nodenr:   4 coo: shaft  main bearing
+     26      Mx coo: blade1                 kNm        MomentMx Mbdy:blade1 nodenr:   3 coo: blade1  blade 1 root
+     27      My coo: blade1                 kNm        MomentMy Mbdy:blade1 nodenr:   3 coo: blade1  blade 1 root
+     28      Mz coo: blade1                 kNm        MomentMz Mbdy:blade1 nodenr:   3 coo: blade1  blade 1 root
+     29      Mx coo: blade2                 kNm        MomentMx Mbdy:blade2 nodenr:   3 coo: blade2  blade 2 root
+     30      My coo: blade2                 kNm        MomentMy Mbdy:blade2 nodenr:   3 coo: blade2  blade 2 root
+     31      Mz coo: blade2                 kNm        MomentMz Mbdy:blade2 nodenr:   3 coo: blade2  blade 2 root
+     32      Mx coo: blade3                 kNm        MomentMx Mbdy:blade3 nodenr:   3 coo: blade3  blade 3 root
+     33      My coo: blade3                 kNm        MomentMy Mbdy:blade3 nodenr:   3 coo: blade3  blade 3 root
+     34      Mz coo: blade3                 kNm        MomentMz Mbdy:blade3 nodenr:   3 coo: blade3  blade 3 root
+     35      Mx coo: local                  kNm        MomentMx Mbdy:blade1 nodenr:  13 coo: local  blade 1 50% local e coo
+     36      My coo: local                  kNm        MomentMy Mbdy:blade1 nodenr:  13 coo: local  blade 1 50% local e coo
+     37      Mz coo: local                  kNm        MomentMz Mbdy:blade1 nodenr:  13 coo: local  blade 1 50% local e coo
+     38      Mx coo: local                  kNm        MomentMx Mbdy:blade2 nodenr:  13 coo: local  blade 2 50% local e coo
+     39      My coo: local                  kNm        MomentMy Mbdy:blade2 nodenr:  13 coo: local  blade 2 50% local e coo
+     40      Mz coo: local                  kNm        MomentMz Mbdy:blade2 nodenr:  13 coo: local  blade 2 50% local e coo
+     41      Mx coo: local                  kNm        MomentMx Mbdy:blade3 nodenr:  13 coo: local  blade 3 50% local e coo
+     42      My coo: local                  kNm        MomentMy Mbdy:blade3 nodenr:  13 coo: local  blade 3 50% local e coo
+     43      Mz coo: local                  kNm        MomentMz Mbdy:blade3 nodenr:  13 coo: local  blade 3 50% local e coo
+     44      State pos y  coo: global       m          State pos y  Mbdy:tower E-nr:  10 Z-rel:1.00 coo: global  tower top fa displ
+     45      State pos x  coo: global       m          State pos x  Mbdy:tower E-nr:  10 Z-rel:1.00 coo: global  tower top ss displ
+     46      State acc y  coo: global       m/s^2      State acc y  Mbdy:tower E-nr:  10 Z-rel:1.00 coo: global  tower top fa acc
+     47      State acc x  coo: global       m/s^2      State acc x  Mbdy:tower E-nr:  10 Z-rel:1.00 coo: global  tower top ss acc
+     48      State pos x  coo: blade1       m          State pos x  Mbdy:blade1 E-nr:  26 Z-rel:1.00 coo: blade1  blade 1 tip pos
+     49      State pos y  coo: blade1       m          State pos y  Mbdy:blade1 E-nr:  26 Z-rel:1.00 coo: blade1  blade 1 tip pos
+     50      State pos z  coo: blade1       m          State pos z  Mbdy:blade1 E-nr:  26 Z-rel:1.00 coo: blade1  blade 1 tip pos
+     51      State pos x  coo: blade2       m          State pos x  Mbdy:blade2 E-nr:  26 Z-rel:1.00 coo: blade2  blade 2 tip pos
+     52      State pos y  coo: blade2       m          State pos y  Mbdy:blade2 E-nr:  26 Z-rel:1.00 coo: blade2  blade 2 tip pos
+     53      State pos z  coo: blade2       m          State pos z  Mbdy:blade2 E-nr:  26 Z-rel:1.00 coo: blade2  blade 2 tip pos
+     54      State pos x  coo: blade3       m          State pos x  Mbdy:blade3 E-nr:  26 Z-rel:1.00 coo: blade3  blade 3 tip pos
+     55      State pos y  coo: blade3       m          State pos y  Mbdy:blade3 E-nr:  26 Z-rel:1.00 coo: blade3  blade 3 tip pos
+     56      State pos z  coo: blade3       m          State pos z  Mbdy:blade3 E-nr:  26 Z-rel:1.00 coo: blade3  blade 3 tip pos
+     57      State pos x  coo: global       m          State pos x  Mbdy:blade1 E-nr:  26 Z-rel:1.00 coo: global  gl blade 1 tip pos
+     58      State pos y  coo: global       m          State pos y  Mbdy:blade1 E-nr:  26 Z-rel:1.00 coo: global  gl blade 1 tip pos
+     59      State pos z  coo: global       m          State pos z  Mbdy:blade1 E-nr:  26 Z-rel:1.00 coo: global  gl blade 1 tip pos
+     60      WSP Vx, glco, R= 72.9          m/s        Wind speed Vx of blade   1 at radius  72.86, global coo.
+     61      Alfa, R= 72.9                  deg        Angle of attack of blade   1 at radius  72.86
+     62      Alfa, R= 72.9                  deg        Angle of attack of blade   2 at radius  72.86
+     63      Alfa, R= 72.9                  deg        Angle of attack of blade   3 at radius  72.86
+     64      Cl, R= 72.5                    deg        Cl of blade   1 at radius  72.86
+     65      Cl, R= 72.5                    deg        Cl of blade   2 at radius  72.86
+     66      Cl, R= 72.5                    deg        Cl of blade   3 at radius  72.86
+     67      Cd, R= 72.5                    deg        Cd of blade   1 at radius  72.86
+     68      Cd, R= 72.5                    deg        Cd of blade   2 at radius  72.86
+     69      Cd, R= 72.5                    deg        Cd of blade   3 at radius  72.86
+     70      DLL inp   1:   1               -          DLL :  1 inpvec :   1  generator torque reference [nm]
+     71      DLL inp   1:   2               -          DLL :  1 inpvec :   2  pitch angle reference of blade 1 [rad]
+     72      DLL inp   1:   3               -          DLL :  1 inpvec :   3  pitch angle reference of blade 2 [rad]
+     73      DLL inp   1:   4               -          DLL :  1 inpvec :   4  pitch angle reference of blade 3 [rad]
+     74      DLL inp   1:   5               -          DLL :  1 inpvec :   5  power reference [w]
+     75      DLL inp   1:   6               -          DLL :  1 inpvec :   6  filtered wind speed [m/s]
+     76      DLL inp   1:   7               -          DLL :  1 inpvec :   7  filtered rotor speed [rad/s]
+     77      DLL inp   1:   8               -          DLL :  1 inpvec :   8  filtered rotor speed error for torque [rad/s]
+     78      DLL inp   1:   9               -          DLL :  1 inpvec :   9  bandpass filtered rotor speed [rad/s]
+     79      DLL inp   1:  10               -          DLL :  1 inpvec :  10  proportional term of torque contr. [nm]
+     80      DLL inp   1:  11               -          DLL :  1 inpvec :  11  integral term of torque controller [nm]
+     81      DLL inp   1:  12               -          DLL :  1 inpvec :  12  minimum limit of torque [nm]
+     82      DLL inp   1:  13               -          DLL :  1 inpvec :  13  maximum limit of torque [nm]
+     83      DLL inp   1:  14               -          DLL :  1 inpvec :  14  torque limit switch based on pitch [-]
+     84      DLL inp   1:  15               -          DLL :  1 inpvec :  15  filtered rotor speed error for pitch [rad/s]
+     85      DLL inp   1:  16               -          DLL :  1 inpvec :  16  power error for pitch [w]
+     86      DLL inp   1:  17               -          DLL :  1 inpvec :  17  proportional term of pitch controller [rad]
+     87      DLL inp   1:  18               -          DLL :  1 inpvec :  18  integral term of pitch controller [rad]
+     88      DLL inp   1:  19               -          DLL :  1 inpvec :  19  minimum limit of pitch [rad]
+     89      DLL inp   1:  20               -          DLL :  1 inpvec :  20  maximum limit of pitch [rad]
+     90      DLL inp   1:  21               -          DLL :  1 inpvec :  21  torque reference from dt dammper [nm]
+     91      DLL inp   1:  22               -          DLL :  1 inpvec :  22  status signal [-]
+     92      DLL inp   1:  23               -          DLL :  1 inpvec :  23  total added pitch rate [rad/s]
+     93      DLL inp   1:  24               -          DLL :  1 inpvec :  24  filtered mean pitch for gain sch [rad]
+     94      DLL inp   1:  25               -          DLL :  1 inpvec :  25  flag for mechnical brake [0=off/1=on]
+     95      DLL inp   1:  26               -          DLL :  1 inpvec :  26  flag for emergency pitch stop [0=off/1=on]
+     96      DLL inp   1:  27               -          DLL :  1 inpvec :  27  lp filtered acceleration level [m/s^2]
+     97      DLL inp   1:  31               -          DLL :  1 inpvec :  31  monitored average of reference pitch [rad]
+     98      DLL inp   1:  32               -          DLL :  1 inpvec :  32  monitored ave. of actual pitch (blade 1) [rad]
+     99      DLL inp   2:   1               -          DLL :  2 inpvec :   1  mgen lss [nm]
+    100      DLL inp   2:   2               -          DLL :  2 inpvec :   2  pelec [w]
+    101      DLL inp   2:   3               -          DLL :  2 inpvec :   3  mframe [nm]
+    102      DLL inp   2:   4               -          DLL :  2 inpvec :   4  mgen hss [nm]
+    103      DLL inp   2:   8               -          DLL :  2 inpvec :   8  grid flag [0=run/1=stop]
+    104      DLL inp   3:   1               -          DLL :  3 inpvec :   1  brake torque [nm]
+    105      DLL inp   4:   1               -          DLL :  4 inpvec :   1  pitch 1 [rad]
+    106      DLL inp   4:   2               -          DLL :  4 inpvec :   2  pitch 2 [rad]
+    107      DLL inp   4:   3               -          DLL :  4 inpvec :   3  pitch 3 [rad]
+    108      DLL inp   5:   1               -          DLL :  5 inpvec :   1  bltip tow min d [m]
+    109      State vel y  coo: global       m/s        State vel y  Mbdy:towertop E-nr:   1 Z-rel:1.00 coo: global  tower top fa vel
+    110      State vel y  coo: global       m/s        State vel y  Mbdy:towertop E-nr:   1 Z-rel:1.00 coo: global  tower top fa vel
+    111      DLL inp   1:  45               -          DLL :  1 inpvec :  45  switch factor
+    112      DLL inp   1:  46               -          DLL :  1 inpvec :  46  filtered tower-top fore-aft velocity
+    113      DLL inp   1:  47               -          DLL :  1 inpvec :  47  gentorq from the floating loop
+    114      DLL inp   1:  48               -          DLL :  1 inpvec :  48  pitch from the floating loop
+________________________________________________________________________________________________________________________
