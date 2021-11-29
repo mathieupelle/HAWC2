@@ -40,7 +40,8 @@ def load_hawc_binary(dat_path):
 #%% Importing datasets
 
 cases = ['./V2/results/hawc2/control/f0.05_eta0.7.dat', './V2/results/hawc2/control/f0.05_eta0.75.dat', \
-         './V2/results/hawc2/control/f0.05_eta0.7ct.dat']
+         './V2/results/hawc2/control/f0.05_eta0.7ct.dat', './V2/results/hawc2/control/f0.06_eta0.7ct.dat',\
+         './V2/results/hawc2/control/f0.06_eta0.75ct.dat']
 
 data_lst = []
 for c in range(len(cases)):
@@ -64,8 +65,10 @@ idx = [irotspd, iwspd, ipitch, iepower, itorque]
 name = ['rpm', 'wspd', 'pitch', 'power', 'torque']
 leg = ['$\omega$ [rad/s]', '$V_{\infty}$ [m/s]', r'$\theta$ [deg]',
        '$P_{electric}$ [MW]', '$Q_{gen}$ [Nm]']
-#lab = ['C1: $f = 0.05$, $\zeta = 0.7$', 'C2: $f = 0.01$, $\zeta = 0.7$', 'C3: $f = 0.10$, $\zeta = 0.7$']
-lab = ['C4: $f = 0.05$, $\zeta = 0.7$', 'C5: $f = 0.01$, $\zeta = 0.7$','C6: $f = 0.10$, $\zeta = 0.7$']
+
+lab = ['$f = 0.05$, $\zeta = 0.7 cp$', '$f = 0.05$, $\zeta = 0.75 cp$',\
+       '$f = 0.05$, $\zeta = 0.7 ct$', '$f = 0.06$, $\zeta = 0.7 ct$',\
+       '$f = 0.05$, $\zeta = 0.75 ct$']
 
 
 for i in range(len(idx)):

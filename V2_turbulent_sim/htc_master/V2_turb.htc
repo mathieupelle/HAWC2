@@ -1,6 +1,6 @@
 ;DTU_10MW_RWT, version 9, 25-09-2017, mhha
   begin simulation;
-    time_stop	1000;
+    time_stop	700;
     solvertype	1;	(newmark)
     on_no_convergence	continue;
     convergence_limits	1000 1 1e-07;
@@ -292,27 +292,27 @@
     scale_time_start	0;
     wind_ramp_factor	0 40 0.6 1;	
 ; Steps ;
-    wind_ramp_abs	140 141 0 1;	wsp. after the step:  5.0
-    wind_ramp_abs	181 182 0 1;	wsp. after the step:  6.0
-    wind_ramp_abs	222 223 0 1;	wsp. after the step:  7.0
-    wind_ramp_abs	263 264 0 1;	wsp. after the step:  8.0
-    wind_ramp_abs	304 305 0 1;	wsp. after the step:  9.0
-    wind_ramp_abs	345 346 0 1;	wsp. after the step: 10.0
-    wind_ramp_abs	386 387 0 1;	wsp. after the step: 11.0
-    wind_ramp_abs	427 428 0 1;	wsp. after the step: 12.0
-    wind_ramp_abs	468 469 0 1;	wsp. after the step: 13.0
-    wind_ramp_abs	509 510 0 1;	wsp. after the step: 14.0
-    wind_ramp_abs	550 551 0 1;	wsp. after the step: 15.0
-    wind_ramp_abs	591 592 0 1;	wsp. after the step: 16.0
-    wind_ramp_abs	632 633 0 1;	wsp. after the step: 17.0
-    wind_ramp_abs	673 674 0 1;	wsp. after the step: 18.0
-    wind_ramp_abs	714 715 0 1;	wsp. after the step: 19.0
-    wind_ramp_abs	755 756 0 1;	wsp. after the step: 20.0
-    wind_ramp_abs	796 797 0 1;	wsp. after the step: 21.0
-    wind_ramp_abs	837 838 0 1;	wsp. after the step: 22.0
-    wind_ramp_abs	878 879 0 1;	wsp. after the step: 23.0
-    wind_ramp_abs	919 920 0 1;	wsp. after the step: 24.0
-    wind_ramp_abs	960 961 0 1;	wsp. after the step: 25.0
+    ; wind_ramp_abs	140 141 0 1;	wsp. after the step:  5.0
+    ; wind_ramp_abs	181 182 0 1;	wsp. after the step:  6.0
+    ; wind_ramp_abs	222 223 0 1;	wsp. after the step:  7.0
+    ; wind_ramp_abs	263 264 0 1;	wsp. after the step:  8.0
+    ; wind_ramp_abs	304 305 0 1;	wsp. after the step:  9.0
+    ; wind_ramp_abs	345 346 0 1;	wsp. after the step: 10.0
+    ; wind_ramp_abs	386 387 0 1;	wsp. after the step: 11.0
+    ; wind_ramp_abs	427 428 0 1;	wsp. after the step: 12.0
+    ; wind_ramp_abs	468 469 0 1;	wsp. after the step: 13.0
+    ; wind_ramp_abs	509 510 0 1;	wsp. after the step: 14.0
+    ; wind_ramp_abs	550 551 0 1;	wsp. after the step: 15.0
+    ; wind_ramp_abs	591 592 0 1;	wsp. after the step: 16.0
+    ; wind_ramp_abs	632 633 0 1;	wsp. after the step: 17.0
+    ; wind_ramp_abs	673 674 0 1;	wsp. after the step: 18.0
+    ; wind_ramp_abs	714 715 0 1;	wsp. after the step: 19.0
+    ; wind_ramp_abs	755 756 0 1;	wsp. after the step: 20.0
+    ; wind_ramp_abs	796 797 0 1;	wsp. after the step: 21.0
+    ; wind_ramp_abs	837 838 0 1;	wsp. after the step: 22.0
+    ; wind_ramp_abs	878 879 0 1;	wsp. after the step: 23.0
+    ; wind_ramp_abs	919 920 0 1;	wsp. after the step: 24.0
+    ; wind_ramp_abs	960 961 0 1;	wsp. after the step: 25.0
 ;
     begin tower_shadow_potential_2;
       tower_mbdy_link	tower;
@@ -322,6 +322,16 @@
     end tower_shadow_potential_2;
   end wind;
 ;
+    begin mann;
+      create_turb_parameters	29.4 1.0 3.9 1001 0;
+      filename_u	./turb/DTU_10MW_turb_u.bin;
+      filename_v	./turb/DTU_10MW_turb_v.bin;
+      filename_w	./turb/DTU_10MW_turb_w.bin;
+      box_dim_u	8192 0.87890625;
+      box_dim_v	32 6.457664165954628;
+      box_dim_w	32 6.457664165954628;
+    end mann;
+  end wind;
   begin aerodrag;
     begin aerodrag_element;
       mbdy_name	tower;
@@ -628,7 +638,7 @@
 ;
   begin output;
     filename	./res/DTU_10MW_RWT;
-	time 0 1000; 
+	time 100 700; 
     data_format	hawc_ascii;
     buffer	1;	
 ;
@@ -664,15 +674,15 @@
     mbdy state	pos blade1 26 1 global # gl blade 1 tip pos;	
 ; - Monitor Aerodynamics - ;
     aero windspeed	3 1 1 72.5;
-    aero alfa	1 72.5;
-    aero alfa	2 72.5;
-    aero alfa	3 72.5;
-    aero cl	1 72.5;
-    aero cl	2 72.5;
-    aero cl	3 72.5;
-    aero cd	1 72.5;
-    aero cd	2 72.5;
-    aero cd	3 72.5;	
+    aero alfa	1 77.5;
+    aero alfa	2 77.5;
+    aero alfa	3 77.5;
+    aero cl	1 77.5;
+    aero cl	2 77.5;
+    aero cl	3 77.5;
+    aero cd	1 77.5;
+    aero cd	2 77.5;
+    aero cd	3 77.5;	
 ; DLL outputs and into HAWC2
     dll inpvec	1 1 # generator torque reference [nm];
     dll inpvec	1 2 # pitch angle reference of blade 1 [rad];

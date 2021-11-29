@@ -374,7 +374,7 @@ class HAWC_design_functions:
             self.newpath = './'+self.new_turbine_name
             shutil.copytree(self.oldpath, self.newpath)
         else:
-            print('  Name already exists. Overwriting files...')
+            print('  Name already exists...')
             self.newpath = './'+self.new_turbine_name
 
         newpath_data = self.newpath+'/data'
