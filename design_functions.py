@@ -517,6 +517,8 @@ class HAWC_design_functions:
                         contents[i] = ('  compute_controller_input;\n')
                     if line.lstrip().startswith(';operational_data_filename'):
                         contents[i] = ('  operational_data_filename\t'+str(opt_path)+' ;file with operational data points\n')
+                    if line.lstrip().startswith('operational_data_filename'):
+                        contents[i] = ('  operational_data_filename\t'+str(opt_path)+' ;file with operational data points\n')
                     if line.lstrip().startswith('compute_optimal_pitch_angle use_operational_data'):
                         contents[i] = ('  ;compute_optimal_pitch_angle use_operational_data;\n')
 

@@ -80,10 +80,10 @@ WT.Make_st_file()
 # Generates htc for controller tuning using opt file
 
 WT.Define_htc_steady_mode('controller_tuning', blade_distributions=False, \
-                            control_lst = [0.05, 0.7, 0.05, 0.7, 2, 2], properties=False)
+                            control_lst = [0.06, 0.7, 0.05, 0.7, 2, 0], properties=False)
 
 # # Generates htc fo unsteady control simulation
-WT.Make_htc_unsteady('./V2/ctrl_tuning/f0.05_eta0.7ct.txt')
+#WT.Make_htc_unsteady('./V2/ctrl_tuning/f0.05_eta0.7ct.txt')
 
 #%%
 
