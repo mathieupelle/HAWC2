@@ -11,6 +11,7 @@
   end simulation;
 ;----------------------------------------------------------------------------------------------------------------------------------------------------------------
   begin new_htc_structure;
+;----------------------------------------------------------------------------------------------------------------------------------------------------------------
     begin main_body;	tower 115m
       name	tower;
       type	timoschenko;
@@ -282,37 +283,16 @@
   begin wind;
     density	1.225;
     wsp	4;
-    tint	0;
+    tint	0.14;
     horizontal_input	1;
     windfield_rotations	0 0 0;	yaw, tilt, rotation
     center_pos0	0 0 -119;	hub heigth
     shear_format	1 0.2;
     turb_format	0;	0=none, 1=mann,2=flex
     tower_shadow_method	0;	0=none, 1=potential flow, 2=jet
-    scale_time_start	0;
+    scale_time_start	100;
     wind_ramp_factor	0 40 0.6 1;	
 ; Steps ;
-    ; wind_ramp_abs	140 141 0 1;	wsp. after the step:  5.0
-    ; wind_ramp_abs	181 182 0 1;	wsp. after the step:  6.0
-    ; wind_ramp_abs	222 223 0 1;	wsp. after the step:  7.0
-    ; wind_ramp_abs	263 264 0 1;	wsp. after the step:  8.0
-    ; wind_ramp_abs	304 305 0 1;	wsp. after the step:  9.0
-    ; wind_ramp_abs	345 346 0 1;	wsp. after the step: 10.0
-    ; wind_ramp_abs	386 387 0 1;	wsp. after the step: 11.0
-    ; wind_ramp_abs	427 428 0 1;	wsp. after the step: 12.0
-    ; wind_ramp_abs	468 469 0 1;	wsp. after the step: 13.0
-    ; wind_ramp_abs	509 510 0 1;	wsp. after the step: 14.0
-    ; wind_ramp_abs	550 551 0 1;	wsp. after the step: 15.0
-    ; wind_ramp_abs	591 592 0 1;	wsp. after the step: 16.0
-    ; wind_ramp_abs	632 633 0 1;	wsp. after the step: 17.0
-    ; wind_ramp_abs	673 674 0 1;	wsp. after the step: 18.0
-    ; wind_ramp_abs	714 715 0 1;	wsp. after the step: 19.0
-    ; wind_ramp_abs	755 756 0 1;	wsp. after the step: 20.0
-    ; wind_ramp_abs	796 797 0 1;	wsp. after the step: 21.0
-    ; wind_ramp_abs	837 838 0 1;	wsp. after the step: 22.0
-    ; wind_ramp_abs	878 879 0 1;	wsp. after the step: 23.0
-    ; wind_ramp_abs	919 920 0 1;	wsp. after the step: 24.0
-    ; wind_ramp_abs	960 961 0 1;	wsp. after the step: 25.0
 ;
     begin tower_shadow_potential_2;
       tower_mbdy_link	tower;
