@@ -653,7 +653,7 @@
     mbdy state	pos blade3 26 1 blade3 # blade 3 tip pos;
     mbdy state	pos blade1 26 1 global # gl blade 1 tip pos;	
 ; - Monitor Aerodynamics - ;
-    aero windspeed	3 1 1 72.5;
+    aero windspeed	3 1 1 77.5;
     aero alfa	1 77.5;
     aero alfa	2 77.5;
     aero alfa	3 77.5;
