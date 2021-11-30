@@ -9,17 +9,17 @@ import re
 import matplotlib.pyplot as plt
 import numpy as np
 from _loads_utils import load_stats
+from matplotlib.patches import Patch
 
-
-stat_dir1 = './dtu10mw_res/dtu10mw_tca/'
-stat_dir2 = './res_turb/'  # results directory with statistics files  !!! END WITH SLASH !!!
-stat_dirs = [stat_dir1, stat_dir2]
-labels = ['DTU 10 MW', 'DTU 10 MW (mean)', 'DTU 10 MW Redesign', 'DTU 10 MW Redesign (mean)']
+stat_dir1 = './DTU10MW/results/hawc2/dtu10mw_tca/'
+stat_dir2 = './V1/results/hawc2/res_turb/'  # results directory with statistics files  !!! END WITH SLASH !!!
+stat_dir3 = './V2/results/hawc2/res_turb/'  # results directory with statistics files  !!! END WITH SLASH !!!
+stat_dirs = [stat_dir1, stat_dir2, stat_dir3]
 
 i_plot = [17, 18, 20, 21, 25, 26, 27, 108]  # channel indices in .sel file that you want to process
 i_wind = 15  # channel number with the wind speed
 # undef_tclear = 18.25  # undeflected-blade tower clearance [m]
-v_ref = [50, 37.5]  # reference wind speed based on wind class (I=50, 2=42.5, 3=37.5)
+v_ref = [50, 37.5, 37.5]  # reference wind speed based on wind class (I=50, 2=42.5, 3=37.5)
 
 
 # dictionary to map .sel index to ylabel for the plot
@@ -38,8 +38,20 @@ ylabels = {4: 'Pitch angle [deg]',
            100: 'Electrical power [W]',
            108: 'Tower clearance [m]'}
 
-marker = ['dg', 'om']
-marker2 = ['db', 'or']
+markers = ['.', '+', '2']
+colors_maxmin = ['#8A8A8A', '#EE6363', '#4876FF']  # colors for max and min
+colors_mean = ['#000000', '#CD0000', '#000080']  # colors mean
+
+pa1 = Patch(facecolor='#000000', edgecolor='black')
+pa2 = Patch(facecolor='#8A8A8A', edgecolor='black')
+
+#
+pb1 = Patch(facecolor='#CD0000', edgecolor='black')
+pb2 = Patch(facecolor='#EE6363', edgecolor='black')
+
+pc1 = Patch(facecolor='#000080', edgecolor='black')
+pc2 = Patch(facecolor='#4876FF', edgecolor='black')
+
 # loop through the channels
 for i, chan_idx in enumerate(i_plot):
 
@@ -53,7 +65,7 @@ for i, chan_idx in enumerate(i_plot):
     plt.tight_layout()
 
 
-    for t in range(2):
+    for t in range(3):
 
         stat_dir = stat_dirs[t]
         # load the del 4 statistics
@@ -97,9 +109,13 @@ for i, chan_idx in enumerate(i_plot):
 
         # plot short-term dels versus wind speed
 
-        plt.plot(wind, data, marker[t])
+        if t==2:
+            data = data*0.7
+            st_dels = st_dels*0.7
+
+        plt.plot(wind, data, marker=markers[t], mec=colors_maxmin[t], ms=6, mfc='none', linestyle='none', alpha=0.8)
         # for fun, plot the wind-speed-averaged DELs on top
-        plt.plot(wsp_uniqe, st_dels, marker2[t], mec='0.2', ms=7, alpha=0.9)
+        plt.plot(wsp_uniqe, st_dels, marker=markers[t], mec=colors_mean[t], ms=6, mfc='none',  linestyle='none', alpha=0.8,)
 
         # calculate the lifetime damage equivalent load
         v_ave = 0.2 * v_ref[t]  # average wind speed per IEC 61400-1
@@ -112,4 +128,7 @@ for i, chan_idx in enumerate(i_plot):
             print('DTU 10MW '+ylabel, f'{del_life:.6e}')
         else:
             print('Redesign '+ylabel, f'{del_life:.6e}')
-    plt.legend(labels)
+
+    plt.legend(handles=[pa1, pb1, pc1, pa2, pb2, pc2],
+                  labels=['', '', '', 'DTU 10MW', 'Redesign V1', 'Redesign V2'], ncol=2, handletextpad=0.5, handlelength=1.0, columnspacing=-0.5,
+          loc='best', fontsize=10)
