@@ -7,7 +7,7 @@ import numpy as np
 from _loads_utils import load_stats
 
 
-stat_dir = 'C:/Users/Mathieu Pellé/Documents/GitHub/LAC_RotorDesign/Loads/res_turb/'  # results directory with statistics files  !!! END WITH SLASH !!!
+stat_dir = './V2/results/hawc2/res_turb/'  # results directory with statistics files  !!! END WITH SLASH !!!
 v_ref = 37.5  # reference wind speed based on wind class (I=50, 2=42.5, 3=37.5)
 i_wind = 15  # channel number with the wind speed
 i_pow = 100  # channel number for electrical power

@@ -108,14 +108,9 @@ for i, chan_idx in enumerate(i_plot):
             st_dels[j] = sum(p * wsp_dels**m)**(1/m)
 
         # plot short-term dels versus wind speed
-
-        if t==2:
-            data = data*0.7
-            st_dels = st_dels*0.7
-
         plt.plot(wind, data, marker=markers[t], mec=colors_maxmin[t], ms=6, mfc='none', linestyle='none', alpha=0.8)
         # for fun, plot the wind-speed-averaged DELs on top
-        plt.plot(wsp_uniqe, st_dels, marker=markers[t], mec=colors_mean[t], ms=6, mfc='none',  linestyle='none', alpha=0.8,)
+        plt.plot(wsp_uniqe, st_dels, marker=markers[t], color=colors_mean[t], ms=6,  linestyle='none', alpha=0.8,)
 
         # calculate the lifetime damage equivalent load
         v_ave = 0.2 * v_ref[t]  # average wind speed per IEC 61400-1
@@ -126,8 +121,10 @@ for i, chan_idx in enumerate(i_plot):
 
         if t==0:
             print('DTU 10MW '+ylabel, f'{del_life:.6e}')
+        elif t==0:
+            print('DTU 10MW V1 '+ylabel, f'{del_life:.6e}')
         else:
-            print('Redesign '+ylabel, f'{del_life:.6e}')
+            print('Redesign V2 '+ylabel, f'{del_life:.6e}')
 
     plt.legend(handles=[pa1, pb1, pc1, pa2, pb2, pc2],
                   labels=['', '', '', 'DTU 10MW', 'Redesign V1', 'Redesign V2'], ncol=2, handletextpad=0.5, handlelength=1.0, columnspacing=-0.5,

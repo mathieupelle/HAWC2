@@ -11,7 +11,7 @@ import numpy as np
 from _loads_utils import load_stats
 
 
-stat_dir = './res_turb/'  # results directory with statistics files  !!! END WITH SLASH !!!
+stat_dir = './V2/results/hawc2/res_turb/'  # results directory with statistics files  !!! END WITH SLASH !!!
 i_plot = [17, 18, 20, 21, 25, 26, 27, 108]  # channel indices in .sel file that you want to process
 i_wind = 15  # channel number with the wind speed
 
@@ -81,10 +81,12 @@ for i, chan_idx in enumerate(i_plot):
     # make the plot
     fig = plt.figure(1 + i, figsize=(7, 3), clear=True)
     plt.plot(wind, minval, 'o')  # minimum values
-    plt.plot(wsp_unique, mean_min, 'or', mec='0.2', ms=7, alpha=0.8)  # plot mean extremes for fun
     plt.plot(wind, maxval, 'o')  # maximum values
-    plt.plot(wsp_unique, mean_max, 'or', mec='0.2', ms=7, alpha=0.8)  # plot mean extremes for fun
     plt.plot(wind, extr_design_load * np.ones_like(wind), lw=2, c='0.2')  # extreme design load
+
+    plt.plot(wsp_unique, mean_min, 'or', mec='0.2', ms=7, alpha=0.8)  # plot mean extremes for fun
+    plt.plot(wsp_unique, mean_max, 'or', mec='0.2', ms=7, alpha=0.8)  # plot mean extremes for fun
+
     plt.grid('on')
     plt.xlabel('Wind speed [m/s]')
     plt.ylabel(ylabel)
