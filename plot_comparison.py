@@ -38,6 +38,9 @@ AEP_percent = []
 for i in range(len(AEP)-1):
     percent = (AEP[i+1] - AEP[0])/AEP[0]*100
     AEP_percent.append(percent)
+
+print('V1 AEP: '+str(AEP_percent[0])+' %')
+print('V2 AEP: '+str(AEP_percent[1])+' %')
 ######################################################################################33
 
 comparison_extrem1 = np.divide(design_loads_redesigned[0], design_loads_original[0])
@@ -103,7 +106,7 @@ plt.legend(['DTU 10MW', "Redesign V1", "Redesign V2"], loc='best')
 fig = plt.figure()
 ax = fig.add_axes([0,0,1,1])
 plt.grid()
-ax.set_title("IIB AEP")
+ax.set_title("IIIB AEP")
 turbine = ['DTU 10MW', "Redesign V1", "Redesign V2"]
 AEP= [AEP[0],AEP[1], AEP[2]]
 ax.bar(turbine,AEP, color = ["grey", "red", "blue"] )
