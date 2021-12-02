@@ -5,6 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ####################################### INPUTS#####################################
+
+#DTU 10MW
 design_loads_original = np.array([
     [3.706034e+05, 1.101813e+05, 5.244604e+04, #Extreme loads
     2.423309e+04, -2.305209e+04, -6.270792e+04,
@@ -14,6 +16,7 @@ design_loads_original = np.array([
     1.701559e+04]
 ])
 
+#V1
 design_loads_redesigned = np.array([
     [3.942804e+05, 1.565319e+05, 5.701050e+04, #Extreme loads
     2.912175e+04, -2.573848e+04, -7.283247e+04,
@@ -23,8 +26,8 @@ design_loads_redesigned = np.array([
     2.101190e+04]
 ])
 
-
-design_loads_redesigned2 = np.array([
+#V2
+design_loads_redesigned = np.array([
     [ 3.646420e+05,  1.101813e+05,  4.978893e+04, #Extreme loads
      2.446630e+04, -2.065615e+04,  -6.937121e+04,
      3.088640e+04,  9.401650e+00],
@@ -33,7 +36,19 @@ design_loads_redesigned2 = np.array([
      1.999097e+04 ]
 ])
 
+#V2 updated
+design_loads_redesigned2 = np.array([
+    [ 3.320336e+05,  1.093607e+05,  5.055221e+04, #Extreme loads
+     2.445882e+04, -2.063784e+04,  -6.676732e+04,
+     3.100348e+04,  9.657310e+00],
+    [4.281686e+04 , 1.862161e+04 ,  9.503877e+03 , #Fatigue loads
+     1.226084e+03,  9.570726e+02, 1.668483e+04 ,
+     1.995543e+04 ]
+])
+
 AEP = np.array([32919, 35553.8,  34253.4]) #[original 10MW, redesigned 10MW] MWh
+AEP = np.array([32919, 34253.4, 33913.2])
+
 AEP_percent = []
 for i in range(len(AEP)-1):
     percent = (AEP[i+1] - AEP[0])/AEP[0]*100

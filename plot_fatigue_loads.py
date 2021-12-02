@@ -121,7 +121,7 @@ for i, chan_idx in enumerate(i_plot):
 
         if t==0:
             print('DTU 10MW '+ylabel, f'{del_life:.6e}')
-        elif t==0:
+        elif t==1:
             print('DTU 10MW V1 '+ylabel, f'{del_life:.6e}')
         else:
             print('Redesign V2 '+ylabel, f'{del_life:.6e}')
