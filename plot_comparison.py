@@ -26,27 +26,27 @@ design_loads_redesigned = np.array([
     2.101190e+04]
 ])
 
-#V2
+# #V2
 design_loads_redesigned = np.array([
     [ 3.646420e+05,  1.101813e+05,  4.978893e+04, #Extreme loads
-     2.446630e+04, -2.065615e+04,  -6.937121e+04,
-     3.088640e+04,  9.401650e+00],
+      2.446630e+04, -2.065615e+04,  -6.937121e+04,
+      3.088640e+04,  9.401650e+00],
     [4.379754e+04 , 1.885766e+04 ,  9.585024e+03 , #Fatigue loads
-     1.246914e+03,  9.654324e+02, 1.685751e+04 ,
-     1.999097e+04 ]
+      1.246914e+03,  9.654324e+02, 1.685751e+04 ,
+      1.999097e+04 ]
 ])
 
 #V2 updated
 design_loads_redesigned2 = np.array([
     [ 3.320336e+05,  1.093607e+05,  5.055221e+04, #Extreme loads
-     2.445882e+04, -2.063784e+04,  -6.676732e+04,
-     3.100348e+04,  9.657310e+00],
+     2.445882e+04, -2.063784e+04,  -6.646970e+04,
+     3.901013e+04,  9.657310e+00],
     [4.281686e+04 , 1.862161e+04 ,  9.503877e+03 , #Fatigue loads
-     1.226084e+03,  9.570726e+02, 1.668483e+04 ,
-     1.995543e+04 ]
+     1.226084e+03,  9.570726e+02, 1.560122e+04 ,
+     2.027070e+04 ]
 ])
 
-AEP = np.array([32919, 35553.8,  34253.4]) #[original 10MW, redesigned 10MW] MWh
+#AEP = np.array([32919, 35553.8,  34253.4]) #[original 10MW, redesigned 10MW] MWh
 AEP = np.array([32919, 34253.4, 33913.2])
 
 AEP_percent = []
@@ -93,7 +93,7 @@ plt.plot(theta, comparison_extrem2 ,'b',marker = 'D')
 # Add legend and title for the plot
 plt.title("Extreme loads",fontsize = 15)
 plt.tight_layout()
-plt.legend(['DTU 10MW', "Redesign V1", "Redesign V2"], loc='best')
+plt.legend(['DTU 10MW', "Redesign V1", "Redesign V2"], bbox_to_anchor=(1.1, 1.05))
 
 
 # #Fatigue
@@ -114,7 +114,7 @@ plt.plot(theta, comparison_fatigue2 ,'b',marker = 'D')
 # Add legend and title for the plot
 plt.title("Fatigue loads",fontsize = 15)
 plt.tight_layout()
-plt.legend(['DTU 10MW', "Redesign V1", "Redesign V2"], loc='best')
+plt.legend(['DTU 10MW', "Redesign V1", "Redesign V2"], bbox_to_anchor=(0.1, 1.05))
 
 
 ## AEP comparison
