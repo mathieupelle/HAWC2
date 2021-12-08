@@ -65,7 +65,7 @@ for i in range(len(idx_plot)):
     plt.ylabel(ylab[idx_plot[i]])
     plt.grid()
 
-
+data = pd.read_csv(path, sep='\s+', skiprows = 1, names = col_names)
 fig,ax = plt.subplots()
 ax.plot( R*data['speed']*np.pi/30/data['V'], data['P'], color="red", marker="o")
 ax.set_xlabel(r'$\lambda$ [-]')

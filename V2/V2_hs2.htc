@@ -312,8 +312,8 @@ begin hawcstab2 ;
 	set_torque_limit 0;
   end operational_data ;
   begin controller_tuning ;
-    partial_load 0.06 0.75 ; fn [hz], zeta [-]
-    full_load 0.06 0.75 ; fn [hz], zeta [-]
+    partial_load 0.06 0.7 ; fn [hz], zeta [-]
+    full_load 0.06 0.7 ; fn [hz], zeta [-]
     gain_scheduling 2 ; 1 linear, 2 quadratic
     constant_power 1; 0 constant torque, 1 constant power at full load	
   end controller_tuning ;

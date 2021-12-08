@@ -21,13 +21,13 @@ WT.Radius_Scaling(R_ref, V_rated_ref, 'A', 'B')
 
 
 # Airfoil design point selection
-WT.Airfoil_Tuning([0.28, 0.30, 0.47, 0.2], remove = ['cylinder.txt', 'FFA-W3-600.txt'], polars=True)
+WT.Airfoil_Tuning([0.28, 0.30, 0.47, 0.2], remove = ['cylinder.txt', 'FFA-W3-600.txt'], polars=False, old_shift=[0.38, 0.32, 0.47, 0.2])
 
 # Aerodynamic design polynomials
-WT.Fit_Polynomials([3, 3, 2, 6], plotting=True)
+WT.Fit_Polynomials([3, 3, 2, 6], plotting=False)
 
 # Looping over TSRs
-# tsr_lst = np.arange(6.5, 10, 0.25)
+# tsr_lst = np.arange(6.25, 10, 0.25)
 # CP_lst = []
 # CT_lst = []
 # for i in range(len(tsr_lst)):
@@ -36,16 +36,17 @@ WT.Fit_Polynomials([3, 3, 2, 6], plotting=True)
 #     CT_lst.append(WT.CT)
 
 # fig, axs = plt.subplots(2)
-# axs[0].plot(tsr_lst, CT_lst)
-# axs[0].set(xlabel =r'$\lambda$', ylabel='$C_T$')
+# axs[0].plot(tsr_lst, CP_lst)
+# axs[0].set(xlabel =r'$\lambda$', ylabel='$C_P$')
 # axs[0].grid()
-# axs[1].plot(tsr_lst, CP_lst)
-# axs[1].set(xlabel =r'$\lambda$', ylabel='$C_P$')
+# axs[1].plot(tsr_lst, CT_lst)
+# axs[1].set(xlabel =r'$\lambda$', ylabel='$C_T$')
 # axs[1].grid()
+
 
 # Chord optimisation and fixing
 WT.Chord_Optimisation(B=3, TSR=7.75, plotting=False)
-WT.Limits_and_Smoothing(plotting=True, spline_plot=True)
+WT.Limits_and_Smoothing(plotting=False, spline_plot=False)
 
 # Generating ae, htc and structural files
 # htc modes: generate_opt, controller_tuning
@@ -79,8 +80,8 @@ WT.Make_st_file()
 
 # Generates htc for controller tuning using opt file
 
-#WT.Define_htc_steady_mode('controller_tuning', blade_distributions=False, \
-#                            control_lst = [0.06, 0.75, 0.06, 0.75, 2, 0], properties=False)
+WT.Define_htc_steady_mode('controller_tuning', blade_distributions=False, \
+                            control_lst = [0.06, 0.7, 0.06, 0.7, 2, 0], properties=False)
 
 # # Generates htc fo unsteady control simulation
 WT.Make_htc_unsteady('./V2/ctrl_tuning/f0.06_eta0.7ct.txt')

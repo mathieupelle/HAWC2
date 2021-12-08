@@ -48,7 +48,7 @@ class HAWC_design_functions:
         print('   New rotor radius: '+str(round(self.R,3))+' m')
 
 
-    def Airfoil_Tuning(self, cl_shift, remove = False, polars = True):
+    def Airfoil_Tuning(self, cl_shift, remove = False, polars = True, old_shift=0):
         print('>> Selecting airfoil design points...')
 
         aero_data_path = './Aerodynamics/Airfoil data/'
@@ -61,6 +61,7 @@ class HAWC_design_functions:
                 filenames.remove(remove[i])
 
         self.cl_des, self.cd_des, self.alpha_des, self.tcratio_af = np.zeros((4,1,len(filenames)))
+        cl_des_old, alpha_des_old, cd_des_old = np.zeros((3,1,len(filenames)))
 
         for i in range(len(filenames)):
 
@@ -80,21 +81,39 @@ class HAWC_design_functions:
             self.alpha_des[0, i] = np.interp(self.cl_des[0, i], data[idx_min:idx, 1], data[idx_min:idx, 0])
             self.cd_des[0, i] = np.interp(self.cl_des[0, i], data[idx_min:idx, 1], data[idx_min:idx, 2])
 
+            if isinstance(old_shift, list):
+                if cl_shift[i] != old_shift[i]:
+                    plot_old_shift = True
+                    cl_des_old[0, i] = cl_max - old_shift[i]
+                    alpha_des_old[0, i] = np.interp(cl_des_old[0, i], data[idx_min:idx, 1], data[idx_min:idx, 0])
+                    cd_des_old[0, i] = np.interp(cl_des_old[0, i], data[idx_min:idx, 1], data[idx_min:idx, 2])
+                else:
+                    plot_old_shift = False
 
             if polars:
                 fig, (ax1, ax2) = plt.subplots(1, 2)
 
-                ax1.axhline(y = self.cl_des[0, i], color='r', linestyle='--', alpha=0.5)
+                ax1.axhline(y = self.cl_des[0, i], color='b', linestyle='--', alpha=0.5)
                 ax1.plot(data[:, 0], data[:, 1], '-.k')
-                ax1.plot(self.alpha_des[0, i], self.cl_des[0, i], 'xr')
+                ax1.plot(self.alpha_des[0, i], self.cl_des[0, i], 'xb')
+                if plot_old_shift:
+                    ax1.plot(alpha_des_old[0, i], cl_des_old[0, i], 'xr')
+                    ax1.axhline(y = cl_des_old[0, i], color='r', linestyle='--', alpha=0.5)
                 ax1.set(xlabel = r'$\alpha$ [deg]', ylabel = '$C_l$ [-]')
                 ax1.grid()
                 ax1.set_xlim(min(data[:, 0]), max(data[:, 0]))
 
                 ax2.plot(data[:, 2], data[:, 1], '-.k')
-                ax2.axhline(y = self.cl_des[0, i], color='r', linestyle='--', alpha=0.5)
-                ax2.axvline(x = self.cd_des[0, i], color='r', linestyle='--', alpha=0.5)
-                ax2.plot(self.cd_des[0, i], self.cl_des[0, i], 'xr')
+                ax2.axhline(y = self.cl_des[0, i], color='b', linestyle='--', alpha=0.5, label='V2')
+                ax2.axvline(x = self.cd_des[0, i], color='b', linestyle='--', alpha=0.5, )
+                if plot_old_shift:
+                    ax2.plot(cd_des_old[0, i], cl_des_old[0, i], 'xr')
+                    ax2.axhline(y = cl_des_old[0, i], color='r', linestyle='--', alpha=0.5)
+                    ax2.axvline(x = cd_des_old[0, i], color='r', linestyle='--', alpha=0.5, label='V1')
+                    plt.legend()
+
+
+                ax2.plot(self.cd_des[0, i], self.cl_des[0, i], 'xb')
                 ax2.set(xlabel = '$C_d$ [-]')
                 ax2.grid()
                 plt.suptitle(filenames[i][0:-4])
@@ -735,7 +754,7 @@ class HAWC_design_functions:
                     if line.lstrip().startswith('constant\t3 '):
                         contents[i] = ('        constant\t3 '+str(self.omega_rated*np.pi/30)+';\tRated rotor (LSS) speed [rad/s]\n')
                     if line.lstrip().startswith('constant\t5 '):
-                        contents[i] = ('        constant\t5 0;\tMinimum pitch angle, theta_min [deg],\n')
+                        contents[i] = ('        constant\t5 101;\tMinimum pitch angle, theta_min [deg],\n')
                     if line.lstrip().startswith('constant\t11 '):
                         contents[i] = ('        constant\t11 '+str(self.K)+';\tOptimal Cp tracking K factor [Nm/(rad/s)^2], ;\n')
                     if line.lstrip().startswith('constant\t12 '):

@@ -57,18 +57,21 @@ iwspd = 14 # column index of wind speed
 ipitch = 70 # column index of pitch angle
 iepower = 99 # column index of electrical power
 itorque = 69 # column index of generator torque
+ithrust = 12 # column index of generator thrust
+iOpPBRM = 25
+iIPBRM = 26
 
 data_all = data_lst
 time_shift = 0
 # ====================== plot things for fun ======================
-idx = [irotspd, iwspd, ipitch, iepower, itorque]
-name = ['rpm', 'wspd', 'pitch', 'power', 'torque']
+idx = [irotspd, iwspd, ipitch, iepower, itorque, ithrust, iOpPBRM, iIPBRM]
+name = ['rpm', 'wspd', 'pitch', 'power', 'torque', 'thrust', 'OoP BRM', 'IP BRM']
 leg = ['$\omega$ [rad/s]', '$V_{\infty}$ [m/s]', r'$\theta$ [deg]',
-       '$P_{electric}$ [MW]', '$Q_{gen}$ [Nm]']
+       '$P_{electric}$ [MW]', '$Q_{gen}$ [Nm]', 'T [kN]', 'OoP BRM [kNm]', 'IP BRM [kNm]']
 
 lab = ['$f = 0.05$, $\zeta = 0.7 cp$', '$f = 0.05$, $\zeta = 0.75 cp$',\
        '$f = 0.05$, $\zeta = 0.7 ct$', '$f = 0.06$, $\zeta = 0.7 ct$',\
-       '$f = 0.05$, $\zeta = 0.75 ct$']
+       '$f = 0.06$, $\zeta = 0.75 ct$']
 
 
 for i in range(len(idx)):
@@ -86,6 +89,12 @@ for i in range(len(idx)):
     plt.xlabel('t [s]')
     plt.grid()
     plt.legend()
+    # plt.xlim([420,500])
+    # idx1 = np.where(time==420)[0][0]
+    # idx2 = np.where(time==500)[0][0]
+    # ylim1 = np.min(y[idx1:idx2])*0.99
+    # ylim2 = np.max(y[idx1:idx2])*1.01
+    # plt.ylim([ylim1, ylim2])
     #plt.savefig('figures/cstP_'+name[i]+'.png')
     #plt.savefig('figures/cstT_'+name[i]+'.png')
 
