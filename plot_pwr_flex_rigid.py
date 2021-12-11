@@ -16,6 +16,13 @@ from matplotlib import pyplot as plt
 # ============================================================================
 f_name_1 = './V2/results/hawc2s/ind/rigid/V2_hs2.pwr'
 f_name_2 = './V2/results/hawc2s/ind/flex/V2_hs2.pwr'
+
+path_dtu_rigid = './DTU10MW/results/hawc2s/DTU_10MW_rigid_hawc2s.pwr'
+path_dtu_flexible = './DTU10MW/results/hawc2s/DTU_10MW_flexible_hawc2s.pwr'
+
+path_V1_rigid = './V1/results/hawc2s/DTU_10MW_redesign_rigid_hawc2s.pwr'
+path_V1_flexible = './V1/results/hawc2s/DTU_10MW_redesign_flexible_hawc2s.pwr'
+
 #
 p_lab = ['Rigid','Flex']
 ch_i = [1,2,8,10,11,12] #[10,11,8,6] #
@@ -56,7 +63,7 @@ p_line_t = [2, 2, 2, 2, 2, 2]
 
 font_size = 10
 p_size = [16,8]
-p_adjust=[0.07,0.13,0.98,0.98]
+p_adjust = [0.07,0.13,0.98,0.98]
 #
 fig, axs = plt.subplots(2,int(len(ch_i)/2))
 fig.set_size_inches(p_size[0],p_size[1])
@@ -88,4 +95,45 @@ for i in range(int(len(ch_i)/2)):
 for ax in fig.get_axes():
     ax.tick_params(axis='both', labelsize=font_size)
     ax.grid(which='major',axis='both', linestyle=':', linewidth=1)
+
+#%% Defletions
+
+
+df_dtu_rigid = np.loadtxt(path_dtu_rigid, skiprows=1)
+df_dtu_flexible = np.loadtxt(path_dtu_flexible, skiprows=1)
+
+df_V1_rigid = np.loadtxt(path_V1_rigid, skiprows=1)
+df_V1_flexible = np.loadtxt(path_V1_flexible, skiprows=1)
+
+
+plt.figure()
+
+plt.plot(df_2[:,0], df_dtu_flexible[:,10]-df_dtu_rigid[:,10], 'k')
+plt.plot(df_2[:,0], df_V1_flexible[:,10]-df_V1_rigid[:,10], 'r')
+plt.plot(df_2[:,0], df_2[:,10]-df_1[:,10],'b')
+plt.grid()
+plt.xlabel('$U_{\infty}$ [m/s]')
+plt.ylabel('$\Delta x$ [m]')
+plt.legend(['DTU 10MW', 'Redesign V1', 'Redesign V2'])
+
+plt.figure()
+plt.plot(df_2[:,0], df_dtu_flexible[:,11]-df_dtu_rigid[:,11], 'k')
+plt.plot(df_2[:,0], df_V1_flexible[:,11]-df_V1_rigid[:,11], 'r')
+plt.plot(df_2[:,0], df_2[:,11]-df_1[:,11],'b')
+plt.grid()
+plt.xlabel('$U_{\infty}$ [m/s]')
+plt.ylabel('$\Delta y$ [m]')
+plt.legend(['DTU 10MW', 'Redesign V1', 'Redesign V2'])
+
+plt.figure()
+plt.plot(df_2[:,0], df_dtu_flexible[:,12]-df_dtu_rigid[:,12], 'k')
+plt.plot(df_2[:,0], df_V1_flexible[:,12]-df_V1_rigid[:,12], 'r')
+plt.plot(df_2[:,0], df_2[:,12]-df_1[:,12],'b')
+plt.grid()
+plt.xlabel('$U_{\infty}$ [m/s]')
+plt.ylabel('$\Delta z$ [m]')
+plt.legend(['DTU 10MW', 'Redesign V1', 'Redesign V2'])
+
+
+
 

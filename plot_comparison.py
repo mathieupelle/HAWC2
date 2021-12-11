@@ -27,14 +27,14 @@ design_loads_redesigned = np.array([
 ])
 
 # #V2
-design_loads_redesigned = np.array([
-    [ 3.646420e+05,  1.101813e+05,  4.978893e+04, #Extreme loads
-      2.446630e+04, -2.065615e+04,  -6.937121e+04,
-      3.088640e+04,  9.401650e+00],
-    [4.379754e+04 , 1.885766e+04 ,  9.585024e+03 , #Fatigue loads
-      1.246914e+03,  9.654324e+02, 1.685751e+04 ,
-      1.999097e+04 ]
-])
+# design_loads_redesigned = np.array([
+#     [ 3.646420e+05,  1.101813e+05,  4.978893e+04, #Extreme loads
+#       2.446630e+04, -2.065615e+04,  -6.937121e+04,
+#       3.088640e+04,  9.401650e+00],
+#     [4.379754e+04 , 1.885766e+04 ,  9.585024e+03 , #Fatigue loads
+#       1.246914e+03,  9.654324e+02, 1.685751e+04 ,
+#       1.999097e+04 ]
+# ])
 
 #V2 updated
 design_loads_redesigned2 = np.array([
